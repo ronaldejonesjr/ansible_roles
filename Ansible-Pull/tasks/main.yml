@@ -83,7 +83,7 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0600'
-    force: true
+    force: false
 
 - name: "Add ansibile to cron.allow"
   ansible.builtin.lineinfile:
@@ -121,12 +121,12 @@
     job: >
       /opt/ansible/.local/bin/ansible-pull
       --only-if-changed
-      --checkout master
+      --checkout main
       --inventory $(hostname),
       --clean
       --diff
       --vault-password-file=/opt/ansible/.vault_pass
-      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible.git
+      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible_lab.git
       local.yml >> /opt/ansible/logs/cron.log 2>&1
     state: present
     disabled: false
@@ -139,11 +139,11 @@
     minute: 00
     job: >
       /opt/ansible/.local/bin/ansible-pull
-      --checkout master
+      --checkout main
       --inventory $(hostname),
       --clean
       --diff
-      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible.git
+      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible_lab.git
       updates.yml >> /opt/ansible/logs/update_cron.log 2>&1
     state: present
     disabled: false

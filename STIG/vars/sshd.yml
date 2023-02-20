@@ -32,64 +32,25 @@ ssh_banner: |
   ################################################################################
 
 
-banner_gui: > 
-  You are accessing a Basement Linux Nerd (BLN) Information System (IS) that is provided for BLN-authorized use only.
-
-  By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
-  - The BLN routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
-  - At any time, the BLN may inspect and seize data stored on this IS.
-
-  - Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any BLN-authorized purpose.
-
-  - This IS includes security measures (e.g., authentication and access controls) to protect BLN interests--not for your personal benefit or privacy.
-
-  - Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."""
-
-
 UofR_ssh_banner: |
-  ################################################################################
-  # You are accessing a University of Rochester (UofR) Information System (IS)   #
-  # that is provided for UofR-authorized use only.                               #
-  #                                                                              #
-  # By using this IS (which includes any device attached to this IS), you        #
-  # consent to the following conditions:                                         #
-  #                                                                              #
-  # - The UofR routinely intercepts and monitors communications on this IS for   #
-  #   purposes including, but not limited to, penetration testing, COMSEC        #
-  #   monitoring, network operations and defense, personnel misconduct (PM), law #
-  #   enforcement (LE), and counterintelligence (CI) investigations.             #
-  #                                                                              #
-  # - At any time, the UofR may inspect and seize data stored on this IS.        #
-  #                                                                              #
-  # - Communications using, or data stored on, this IS are not private, are      #
-  #   subject to routine monitoring, interception, and search, and may be        #
-  #   disclosed or used for any UofR-authorized purpose.                         #
-  #                                                                              #
-  # - This IS includes security measures (e.g., authentication and access        #
-  #   controls) to protect UofR interests--not for your personal benefit or      #
-  #   privacy.                                                                   #
-  #                                                                              #
-  # - Notwithstanding the above, using this IS does not constitute consent to    #
-  #   PM, LE or CI investigative searching or monitoring of the content of       #
-  #   privileged communications, or work product, related to personal            #
-  #   representation or services by attorneys, psychotherapists, or clergy, and  #
-  #   their assistants. Such communications and work product are private and     #
-  #   confidential. See User Agreement for details.                              #
-  ################################################################################
+  ********************************************************************************
+  *                                                                              *
+  *  I UNDERSTAND AND CONSENT TO THE FOLLOWING:                                  *
+  *                                                                              *
+  *  I am accessing a University of Rochester information system for             *
+  *  authorized use only. Unauthorized use of this information system is         *
+  *  prohibited and subject to criminal, civil, security, or administrative      *
+  *  proceedings and/or penalties.                                               *
+  *                                                                              *
+  *  USE OF THIS INFORMATION SYSTEM INDICATES CONSENT TO THE INTERCEPTION,       *
+  *  MONITORING, RECORDING, AND COPYING OF ALL ACTIVITIES AND DATA.              *
+  *                                                                              *
+  *  The University of Rochester routinely monitors communications occurring     *
+  *  on this information system. I have no reasonable expectation of privacy     *
+  *  regarding any communications or data transiting or stored on this           *
+  *  information system. At any time, the University may intercept, search,      *
+  *  or seize any communication or data transiting or stored on this             *
+  *  information system.                                                         *
+  *                                                                              *
+  ********************************************************************************
 
-UofR_banner_gui: >
-  You are accessing a University of Rochester (UofR) Information System (IS) that is provided for UofR-authorized use only.
-
-  By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
-  - The UofR routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
-  - At any time, the UofR may inspect and seize data stored on this IS.
-
-  - Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any UofR-authorized purpose.
-
-  - This IS includes security measures (e.g., authentication and access controls) to protect UofR interests--not for your personal benefit or privacy.
-
-  - Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details.

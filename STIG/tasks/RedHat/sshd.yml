@@ -9,7 +9,7 @@
 
   - name: "All RHEL 8 networked systems must have SSH installed."
     tags:
-      - V-244549
+      - V244549
       - medium
       - RHEL-08-040159
       - SV-244549r854078_rule
@@ -28,7 +28,7 @@
       - SRG-OS-000424-GPOS-00188
       - SRG-OS-000425-GPOS-00189
       - SRG-OS-000426-GPOS-00190
-      - V-230526
+      - V230526
       - medium
       - RHEL-08-040160
       - SV-230526r854067_rule
@@ -48,7 +48,7 @@
 
   - name: "The RHEL 8 SSH public host key files must have mode 0644 or less permissive."
     tags:
-        - V-230286
+        - V230286
         - medium
         - RHEL-08-010480
         - SV-230286r627750_rule
@@ -78,7 +78,7 @@
 
   - name: "The RHEL 8 SSH private host key files must have mode 0600 or less permissive."
     tags:
-        - V-230287
+        - V230287
         - medium
         - RHEL-08-010490
         - SV-230287r743951_rule
@@ -108,7 +108,7 @@
 
   - name: "RHEL 8 must ensure the SSH server uses strong entropy."
     tags:
-        - V-230253
+        - V230253
         - low
         - RHEL-08-010292
         - SV-230253r627750_rule
@@ -137,7 +137,7 @@
 
   - name: "The RHEL 8 operating system must implement DoD-approved encryption to protect the confidentiality of SSH server connections."
     tags:
-        - V-230252
+        - V230252
         - medium
         - RHEL-08-010291
         - SV-230252r743940_rule
@@ -170,7 +170,7 @@
 
   - name: "The RHEL 8 SSH daemon must be configured to use system-wide crypto policies."
     tags:
-        - V-244526
+        - V244526
         - medium
         - RHEL-08-010287
         - SV-244526r809334_rule
@@ -204,7 +204,7 @@
       "RHEL 8 must display the Standard Mandatory DoD Notice and Consent Banner
       before granting local or remote access to the system via a ssh logon."
     tags:
-        - V-230225
+        - V230225
         - medium
         - RHEL-08-010040
         - SV-230225r858694_rule
@@ -248,7 +248,7 @@
 
   - name: "The RHEL 8 SSH daemon must perform strict mode checking of home directory configuration files."
     tags:
-        - V-230288
+        - V230288
         - medium
         - RHEL-08-010500
         - SV-230288r858701_rule
@@ -277,7 +277,7 @@
 
   - name: "The RHEL 8 SSH daemon must not allow compression or must only allow compression after successful authentication."
     tags:
-        - V-230289
+        - V230289
         - medium
         - RHEL-08-010510
         - SV-230289r858703_rule
@@ -306,7 +306,7 @@
 
   - name: "The RHEL 8 SSH daemon must not allow authentication using known host’s authentication."
     tags:
-        - V-230290
+        - V230290
         - medium
         - RHEL-08-010520
         - SV-230290r858705_rule
@@ -335,7 +335,7 @@
 
   - name: "The RHEL 8 SSH daemon must not allow Kerberos authentication, except to fulfill documented and validated mission requirements."
     tags:
-        - V-230291
+        - V230291
         - medium
         - RHEL-08-010521
         - SV-230291r858707_rule
@@ -364,7 +364,7 @@
 
   - name: "RHEL 8 must not permit direct logons to the root account using remote access via SSH."
     tags:
-        - V-230296
+        - V230296
         - medium
         - RHEL-08-010550
         - SV-230296r858711_rule
@@ -393,7 +393,7 @@
 
   - name: "RHEL 8 must not allow users to override SSH environment variables."
     tags:
-        - V-230330
+        - V230330
         - medium
         - RHEL-08-010830
         - SV-230330r858713_rule
@@ -422,7 +422,7 @@
 
   - name: "RHEL 8 must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements."
     tags:
-        - V-230244
+        - V230244
         - medium
         - RHEL-08-010200
         - SV-230244r858697_rule
@@ -454,7 +454,7 @@
 
   - name: "The RHEL 8 SSH daemon must not allow GSSAPI authentication, except to fulfill documented and validated mission requirements."
     tags:
-        - V-244528
+        - V244528
         - medium
         - RHEL-08-010522
         - SV-244528r858709_rule
@@ -483,7 +483,7 @@
 
   - name: "The RHEL 8 SSH daemon must be configured with a timeout interval."
     tags:
-        - V-244525
+        - V244525
         - medium
         - RHEL-08-010201
         - SV-244525r858699_rule
@@ -515,7 +515,7 @@
 
   - name: "The RHEL 8 SSH daemon must prevent remote hosts from connecting to the proxy display."
     tags:
-        - V-230556
+        - V230556
         - medium
         - RHEL-08-040341
         - SV-230556r858723_rule
@@ -544,7 +544,7 @@
 
   - name: "RHEL 8 remote X connections for interactive users must be disabled unless to fulfill documented and validated mission requirements."
     tags:
-        - V-230555
+        - V230555
         - medium
         - RHEL-08-040340
         - SV-230555r858721_rule
@@ -580,7 +580,7 @@
 
   - name: "RHEL 8 must force a frequent session key renegotiation for SSH connections to the server."
     tags:
-        - V-230527
+        - V230527
         - medium
         - RHEL-08-040161
         - SV-230527r858719_rule
@@ -612,7 +612,7 @@
 
   - name: "RHEL 8 must display the date and time of the last successful account logon upon an SSH logon."
     tags:
-        - V-230382
+        - V230382
         - medium
         - RHEL-08-020350
         - SV-230382r858717_rule
@@ -641,7 +641,7 @@
 
   - name: "RHEL 8 must not allow accounts configured with blank or null passwords."
     tags:
-        - V-230380
+        - V230380
         - high
         - RHEL-08-020330
         - SV-230380r858715_rule
@@ -670,7 +670,7 @@
 
 # - name: "There must be no shosts.equiv files on the RHEL 8 operating system."
 #   tags:
-#       - V-230283
+#       - V230283
 #       - high
 #       - RHEL-08-010460
 #       - SV-230283r627750_rule
@@ -705,7 +705,7 @@
 #           $ sudo rm /etc/ssh/shosts.equiv
 # - name: "There must be no .shosts files on the RHEL 8 operating system."
 #   tags:
-#       - V-230284
+#       - V230284
 #       - high
 #       - RHEL-08-010470
 #       - SV-230284r627750_rule
@@ -741,7 +741,7 @@
 
 # - name: "RHEL 8, for certificate-based authentication, must enforce authorized access to the corresponding private key."
 #   tags:
-#       - V-230230
+#       - V230230
 #       - medium
 #       - RHEL-08-010100
 #       - SV-230230r627750_rule

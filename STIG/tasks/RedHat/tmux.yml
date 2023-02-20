@@ -3,7 +3,7 @@
 
 - name: "RHEL 8 must have the tmux package installed."
   tags:
-    - V-244537
+    - V244537
     - medium
     - RHEL-08-020039
     - SV-244537r743860_rule
@@ -29,7 +29,7 @@
 
 - name: "RHEL 8 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for command line sessions."
   tags:
-    - V-230348
+    - V230348
     - medium
     - RHEL-08-020040
     - SV-230348r743987_rule
@@ -59,7 +59,7 @@
 
 - name: "RHEL 8 must automatically lock command line user sessions after 15 minutes of inactivity."
   tags:
-      - V-230353
+      - V230353
       - medium
       - RHEL-08-020070
       - SV-230353r627750_rule
@@ -89,7 +89,7 @@
 
 - name: "RHEL 8 must prevent users from disabling session control mechanisms."
   tags:
-    - V-230350
+    - V230350
     - low
     - RHEL-08-020042
     - SV-230350r627750_rule
@@ -113,7 +113,7 @@
 
 - name: "RHEL 8 must ensure session control is automatically started at shell initialization."
   tags:
-      - V-230349
+      - V230349
       - medium
       - RHEL-08-020041
       - SV-230349r833388_rule

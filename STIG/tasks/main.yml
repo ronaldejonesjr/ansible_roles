@@ -1,7 +1,14 @@
 ---
 
+- name: "Pull OS family specific files."
+  when: ansible_os_family == "Debian"
+  ansible.builtin.include_tasks: "{{ item }}"
+  with_fileglob:
+    - "{{ ansible_os_family }}/*.yml"
+
 - name: "Begin system hardening"
   ansible.builtin.include_tasks: "{{ rolesvar }}"
+  when: ansible_os_family == "RedHat"
   loop_control:
     loop_var: rolesvar
   loop:
@@ -9,4 +16,7 @@
     - "{{ ansible_os_family }}/auditd.yml"
     - "{{ ansible_os_family }}/tmux.yml"
     - "{{ ansible_os_family }}/sshd.yml"
-
+    - "{{ ansible_os_family }}/dconf.yml"
+    - "{{ ansible_os_family }}/AIDE.yml"
+    # - "{{ ansible_os_family }}/sudo.yml"
+    # - "{{ ansible_os_family }}/disks.yml"
