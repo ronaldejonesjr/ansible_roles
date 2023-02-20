@@ -1,0 +1,14 @@
+##################################################
+# Defaults for all hosts
+##################################################
+Host *
+  User "{{ username }}"
+  Port 22
+  Protocol 2
+  IdentityFile {{ home }}/.ssh/id_{{ username }}
+  ServerAliveInterval 60
+  ServerAliveCountMax 30
+
+##################################################
+# Per host configurations
+##################################################

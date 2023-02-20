@@ -1,0 +1,15 @@
+---
+
+# Can not use on a ansible pull or node running ansible.
+- name: "System Reboot"
+  ansible.builtin.reboot:
+    msg: "Reboot initated by Ansible"
+    connection_timeout: 5 # Time between connection attempts.
+    reboot_timeout: 900 # Wait upto 15 min. trying to connect.
+    pre_reboot_dely: 0 # Do not wait to issue reboot (needs to be multiple of 60)
+    post_reboot_delay: 30 # Seconds to wait after the reboot command was successful
+    test_command: uptime
+
+- name: "System Reboot via shutdown"
+  ansible.builtin.command:
+    cmd: shutdown -r +1 "Reboot initated by Ansible"

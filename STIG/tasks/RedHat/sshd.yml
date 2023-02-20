@@ -1,0 +1,776 @@
+---
+
+- name: "Import vars"
+  ansible.builtin.include_vars:
+    file: sshd.yml
+
+- name: "# Install and system setup"
+  block:
+
+  - name: "All RHEL 8 networked systems must have SSH installed."
+    tags:
+      - V-244549
+      - medium
+      - RHEL-08-040159
+      - SV-244549r854078_rule
+      - C-47824r743894_chk
+      - F-47781r743895_fix
+      - MAC-1_Classified
+      - MAC-1_Public
+      - MAC-1_Sensitive
+      - MAC-2_Classified
+      - MAC-2_Public
+      - MAC-2_Sensitive
+      - MAC-3_Classified
+      - MAC-3_Public
+      - MAC-3_Sensitive
+      - SRG-OS-000423-GPOS-00187
+      - SRG-OS-000424-GPOS-00188
+      - SRG-OS-000425-GPOS-00189
+      - SRG-OS-000426-GPOS-00190
+      - V-230526
+      - medium
+      - RHEL-08-040160
+      - SV-230526r854067_rule
+      - C-33195r744030_chk
+      - F-33170r744031_fix
+      - SRG-OS-000423-GPOS-00187
+      - SRG-OS-000424-GPOS-00188
+      - SRG-OS-000425-GPOS-00189
+      - SRG-OS-000426-GPOS-00190
+    when: "'openssh-server' not in ansible_facts.packages"
+    ansible.builtin.package:
+      update_cache: true
+      state: present
+      name:
+          - openssh-server
+    notify: Restart sshd.service
+
+  - name: "The RHEL 8 SSH public host key files must have mode 0644 or less permissive."
+    tags:
+        - V-230286
+        - medium
+        - RHEL-08-010480
+        - SV-230286r627750_rule
+        - C-32955r567604_chk
+        - F-32930r567605_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.file:
+      path: "{{ V230286 }}"
+      owner: root
+      group: ssh_keys
+      mode: 0400
+      modification_time: preserve
+      access_time: preserve
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230286
+    with_fileglob:
+      - '/etc/ssh/*key.pub'
+
+  - name: "The RHEL 8 SSH private host key files must have mode 0600 or less permissive."
+    tags:
+        - V-230287
+        - medium
+        - RHEL-08-010490
+        - SV-230287r743951_rule
+        - C-32956r743949_chk
+        - F-32931r743950_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.file:
+      path: "{{ V230287 }}"
+      owner: root
+      group: ssh_keys
+      mode: 0400
+      modification_time: preserve
+      access_time: preserve
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230287
+    with_fileglob:
+      - '/etc/ssh/*key.pub'
+
+  - name: "RHEL 8 must ensure the SSH server uses strong entropy."
+    tags:
+        - V-230253
+        - low
+        - RHEL-08-010292
+        - SV-230253r627750_rule
+        - C-32922r567505_chk
+        - F-32897r567506_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/sysconfig/sshd"
+      create: true
+      mode: 0640
+      regex: "{{ V230253.regex }}"
+      line: "{{ V230253.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230253
+    loop:
+      - { regex: '^(#*|#\s*|\s*)SSH_USE_STRONG_RNG=', line: "SSH_USE_STRONG_RNG=32" }
+
+  - name: "The RHEL 8 operating system must implement DoD-approved encryption to protect the confidentiality of SSH server connections."
+    tags:
+        - V-230252
+        - medium
+        - RHEL-08-010291
+        - SV-230252r743940_rule
+        - C-32921r743938_chk
+        - F-32896r743939_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+        - SRG-OS-000250-GPOS-00093
+        - SRG-OS-000393-GPOS-00173
+        - SRG-OS-000394-GPOS-00174
+        - SRG-OS-000125-GPOS-00065
+    ansible.builtin.lineinfile:
+      name: "/etc/sysconfig/sshd"
+      create: true
+      mode: 0640
+      regex: "{{ V230252.regex }}"
+      line: "{{ V230252.line }}"
+    notify: System Reboot via shutdown
+    loop_control:
+      loop_var: V230252
+    loop:
+      - { regex: '^(#*|#\s*|\s*)-oCiphers=', line: "-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr" }
+
+  - name: "The RHEL 8 SSH daemon must be configured to use system-wide crypto policies."
+    tags:
+        - V-244526
+        - medium
+        - RHEL-08-010287
+        - SV-244526r809334_rule
+        - C-47801r809332_chk
+        - F-47758r809333_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/sysconfig/sshd"
+      create: true
+      mode: 0640
+      regex: "{{ V244526.regex }}"
+      line: "{{ V244526.line }}"
+    notify: System Reboot via shutdown
+    loop_control:
+      loop_var: V244526
+    loop:
+      - { regex: '^(#*|#\s*|\s*)CRYPTO_POLICY=(.*)', line: '# CRYPTO_POLICY=\2' }
+
+- name: "# Configure sshd.comf"
+  block: 
+
+  - name: > 
+      "RHEL 8 must display the Standard Mandatory DoD Notice and Consent Banner
+      before granting local or remote access to the system via a ssh logon."
+    tags:
+        - V-230225
+        - medium
+        - RHEL-08-010040
+        - SV-230225r858694_rule
+        - C-32894r858693_chk
+        - F-32869r567422_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+        - SRG-OS-000023-GPOS-00006
+        - SRG-OS-000228-GPOS-00088
+    block:
+
+      - name: "Deploy banner file(s)"
+        ansible.builtin.copy:
+          dest: "/etc/issue"
+          owner: root
+          group: root
+          mode: '0400'
+          force: true
+          content: "{{ ssh_banner }}"
+        notify: Restart sshd.service
+
+      - name: "Update sshd"
+        ansible.builtin.lineinfile:
+          name: "/etc/ssh/sshd_config"
+          create: true
+          mode: 0600
+          regex: "{{ V230225.regex }}"
+          line: "{{ V230225.line }}"
+        notify: Restart sshd.service
+        loop_control:
+          loop_var: V230225
+        loop:
+          - { regex: '^(#*|#\s*|\s*)(b|B)anner(\s*)', line: "banner /etc/issue" }
+
+  - name: "The RHEL 8 SSH daemon must perform strict mode checking of home directory configuration files."
+    tags:
+        - V-230288
+        - medium
+        - RHEL-08-010500
+        - SV-230288r858701_rule
+        - C-32957r858700_chk
+        - F-32932r567611_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230288.regex }}"
+      line: "{{ V230288.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230288
+    loop:
+      - { regex: '^(#*|#\s*|\s*)StrictModes ', line: "StrictModes yes" }
+
+  - name: "The RHEL 8 SSH daemon must not allow compression or must only allow compression after successful authentication."
+    tags:
+        - V-230289
+        - medium
+        - RHEL-08-010510
+        - SV-230289r858703_rule
+        - C-32958r858702_chk
+        - F-32933r743953_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230289.regex }}"
+      line: "{{ V230289.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230289
+    loop:
+      - { regex: '^(#*|#\s*|\s*)Compression  ', line: "Compression delayed" }
+
+  - name: "The RHEL 8 SSH daemon must not allow authentication using known host’s authentication."
+    tags:
+        - V-230290
+        - medium
+        - RHEL-08-010520
+        - SV-230290r858705_rule
+        - C-32959r858704_chk
+        - F-32934r567617_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230290.regex }}"
+      line: "{{ V230290.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230290
+    loop:
+      - { regex: '^(#*|#\s*|\s*)IgnoreUserKnownHosts  ', line: "IgnoreUserKnownHosts yes" }
+
+  - name: "The RHEL 8 SSH daemon must not allow Kerberos authentication, except to fulfill documented and validated mission requirements."
+    tags:
+        - V-230291
+        - medium
+        - RHEL-08-010521
+        - SV-230291r858707_rule
+        - C-32960r858706_chk
+        - F-32935r743956_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230291.regex }}"
+      line: "{{ V230291.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230291
+    loop:
+      - { regex: '^(#*|#\s*|\s*)KerberosAuthentication  ', line: "KerberosAuthentication no" }
+
+  - name: "RHEL 8 must not permit direct logons to the root account using remote access via SSH."
+    tags:
+        - V-230296
+        - medium
+        - RHEL-08-010550
+        - SV-230296r858711_rule
+        - C-32965r858710_chk
+        - F-32940r567635_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230296.regex }}"
+      line: "{{ V230296.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230296
+    loop:
+      - { regex: '^(#*|#\s*|\s*)PermitRootLogin  ', line: "PermitRootLogin no" }
+
+  - name: "RHEL 8 must not allow users to override SSH environment variables."
+    tags:
+        - V-230330
+        - medium
+        - RHEL-08-010830
+        - SV-230330r858713_rule
+        - C-32999r858712_chk
+        - F-32974r567737_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230296.regex }}"
+      line: "{{ V230296.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230296
+    loop:
+      - { regex: '^(#*|#\s*|\s*)PermitUserEnvironment  ', line: "PermitUserEnvironment no" }
+
+  - name: "RHEL 8 must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements."
+    tags:
+        - V-230244
+        - medium
+        - RHEL-08-010200
+        - SV-230244r858697_rule
+        - C-32913r858695_chk
+        - F-32888r858696_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+        - SRG-OS-000163-GPOS-00072
+        - SRG-OS-000126-GPOS-00066
+        - SRG-OS-000279-GPOS-00109
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230244.regex }}"
+      line: "{{ V230244.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230244
+    loop:
+      - { regex: '^(#*|#\s*|\s*)ClientAliveCountMax  ', line: "ClientAliveCountMax 1" }
+
+  - name: "The RHEL 8 SSH daemon must not allow GSSAPI authentication, except to fulfill documented and validated mission requirements."
+    tags:
+        - V-244528
+        - medium
+        - RHEL-08-010522
+        - SV-244528r858709_rule
+        - C-47803r858708_chk
+        - F-47760r743832_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V244528.regex }}"
+      line: "{{ V244528.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V244528
+    loop:
+      - { regex: '^(#*|#\s*|\s*)GSSAPIAuthentication  ', line: "GSSAPIAuthentication no" }
+
+  - name: "The RHEL 8 SSH daemon must be configured with a timeout interval."
+    tags:
+        - V-244525
+        - medium
+        - RHEL-08-010201
+        - SV-244525r858699_rule
+        - C-47800r858698_chk
+        - F-47757r743823_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+        - SRG-OS-000163-GPOS-00072
+        - SRG-OS-000126-GPOS-00066
+        - SRG-OS-000279-GPOS-00109
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V244525.regex }}"
+      line: "{{ V244525.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V244525
+    loop:
+      - { regex: '^(#*|#\s*|\s*)ClientAliveInterval  ', line: "ClientAliveInterval 600" }
+
+  - name: "The RHEL 8 SSH daemon must prevent remote hosts from connecting to the proxy display."
+    tags:
+        - V-230556
+        - medium
+        - RHEL-08-040341
+        - SV-230556r858723_rule
+        - C-33225r858722_chk
+        - F-33200r568415_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230244.regex }}"
+      line: "{{ V230244.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230244
+    loop:
+      - { regex: '^(#*|#\s*|\s*)X11UseLocalhost  ', line: "X11UseLocalhost yes" }
+
+  - name: "RHEL 8 remote X connections for interactive users must be disabled unless to fulfill documented and validated mission requirements."
+    tags:
+        - V-230555
+        - medium
+        - RHEL-08-040340
+        - SV-230555r858721_rule
+        - C-33224r858720_chk
+        - F-33199r568412_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230555.regex }}"
+      line: "{{ V230555.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230555
+    loop:
+      - { regex: '^(#*|#\s*|\s*)X11Forwarding ', line: "X11Forwarding no" }
+        #           X11 forwarding should be enabled with caution. Users with the ability to bypass file permissions on
+        #           the remote host (for the user's X11 authorization database) can access the local X11 display through
+        #           the forwarded connection. An attacker may then be able to perform activities such as keystroke
+        #           monitoring if the ForwardX11Trusted option is also enabled.
+
+        #           If X11 services are not required for the system's intended function, they should be disabled or
+        #           restricted as appropriate to the system’s needs.
+
+  - name: "RHEL 8 must force a frequent session key renegotiation for SSH connections to the server."
+    tags:
+        - V-230527
+        - medium
+        - RHEL-08-040161
+        - SV-230527r858719_rule
+        - C-33196r858718_chk
+        - F-33171r568328_fix
+        - MAC-1_Classified
+        - MAC-1_Public
+        - MAC-1_Sensitive
+        - MAC-2_Classified
+        - MAC-2_Public
+        - MAC-2_Sensitive
+        - MAC-3_Classified
+        - MAC-3_Public
+        - MAC-3_Sensitive
+        - SRG-OS-000033-GPOS-00014
+        - SRG-OS-000420-GPOS-00186
+        - SRG-OS-000424-GPOS-00188
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230527.regex }}"
+      line: "{{ V230527.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230527
+    loop:
+      - { regex: '^(#*|#\s*|\s*)RekeyLimit ', line: "RekeyLimit 1G 1h" }
+
+  - name: "RHEL 8 must display the date and time of the last successful account logon upon an SSH logon."
+    tags:
+        - V-230382
+        - medium
+        - RHEL-08-020350
+        - SV-230382r858717_rule
+        - C-33051r858716_chk
+        - F-33026r567893_fix
+        - MAC-1_Classified"
+        - MAC-1_Public"
+        - MAC-1_Sensitive"
+        - MAC-2_Classified"
+        - MAC-2_Public"
+        - MAC-2_Sensitive"
+        - MAC-3_Classified"
+        - MAC-3_Public"
+        - MAC-3_Sensitive"
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230382.regex }}"
+      line: "{{ V230382.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230382
+    loop:
+      - { regex: '^(#*|#\s*|\s*)PrintLastLog ', line: "PrintLastLog yes" }
+
+  - name: "RHEL 8 must not allow accounts configured with blank or null passwords."
+    tags:
+        - V-230380
+        - high
+        - RHEL-08-020330
+        - SV-230380r858715_rule
+        - C-33049r858714_chk
+        - F-33024r743992_fix
+        - MAC-1_Classified"
+        - MAC-1_Public"
+        - MAC-1_Sensitive"
+        - MAC-2_Classified"
+        - MAC-2_Public"
+        - MAC-2_Sensitive"
+        - MAC-3_Classified"
+        - MAC-3_Public"
+        - MAC-3_Sensitive"
+    ansible.builtin.lineinfile:
+      name: "/etc/ssh/sshd_config"
+      create: true
+      mode: 0600
+      regex: "{{ V230380.regex }}"
+      line: "{{ V230380.line }}"
+    notify: Restart sshd.service
+    loop_control:
+      loop_var: V230380
+    loop:
+      - { regex: '^(#*|#\s*|\s*)PermitEmptyPasswords ', line: "PermitEmptyPasswords no" }
+
+# - name: "There must be no shosts.equiv files on the RHEL 8 operating system."
+#   tags:
+#       - V-230283
+#       - high
+#       - RHEL-08-010460
+#       - SV-230283r627750_rule
+#       - C-32952r567595_chk
+#       - F-32927r567596_fix
+#       - MAC-1_Classified
+#       - MAC-1_Public
+#       - MAC-1_Sensitive
+#       - MAC-2_Classified
+#       - MAC-2_Public
+#       - MAC-2_Sensitive
+#       - MAC-3_Classified
+#       - MAC-3_Public
+#       - MAC-3_Sensitive
+#   block:
+#     ansible.builtin.debug:
+#       msg: > 
+#        Description:
+#           The "shosts.equiv" files are used to configure host-based authentication for the system via SSH.
+#           Host-based authentication is not sufficient for preventing unauthorized access to the system, as it
+#           does not require interactive identification and authentication of a connection request, or for the
+#           use of two-factor authentication.
+#         Check:
+#           Verify there are no "shosts.equiv" files on RHEL 8 with the following command:
+
+#           $ sudo find / -name shosts.equiv
+
+#           If a "shosts.equiv" file is found, this is a finding.
+#         Fix:
+#           Remove any found "shosts.equiv" files from the system.
+
+#           $ sudo rm /etc/ssh/shosts.equiv
+# - name: "There must be no .shosts files on the RHEL 8 operating system."
+#   tags:
+#       - V-230284
+#       - high
+#       - RHEL-08-010470
+#       - SV-230284r627750_rule
+#       - C-32953r567598_chk
+#       - F-32928r567599_fix
+#       - MAC-1_Classified
+#       - MAC-1_Public
+#       - MAC-1_Sensitive
+#       - MAC-2_Classified
+#       - MAC-2_Public
+#       - MAC-2_Sensitive
+#       - MAC-3_Classified
+#       - MAC-3_Public
+#       - MAC-3_Sensitive
+#   block:
+#     ansible.builtin.debug:
+#       msg: > 
+#        Description:
+#           The ".shosts" files are used to configure host-based authentication for individual users or the
+#           system via SSH. Host-based authentication is not sufficient for preventing unauthorized access to
+#           the system, as it does not require interactive identification and authentication of a connection
+#           request, or for the use of two-factor authentication.
+#         Check:
+#           Verify there are no ".shosts" files on RHEL 8 with the following command:
+
+#           $ sudo find / -name '*.shosts'
+
+#           If any ".shosts" files are found, this is a finding.
+#         Fix:
+#           Remove any found ".shosts" files from the system.
+
+#           $ sudo rm /[path]/[to]/[file]/.shosts
+
+# - name: "RHEL 8, for certificate-based authentication, must enforce authorized access to the corresponding private key."
+#   tags:
+#       - V-230230
+#       - medium
+#       - RHEL-08-010100
+#       - SV-230230r627750_rule
+#       - C-32899r567436_chk
+#       - F-32874r567437_fix
+#       - MAC-1_Classified
+#       - MAC-1_Public
+#       - MAC-1_Sensitive
+#       - MAC-2_Classified
+#       - MAC-2_Public
+#       - MAC-2_Sensitive
+#       - MAC-3_Classified
+#       - MAC-3_Public
+#       - MAC-3_Sensitive
+#   block:
+#     ansible.builtin.debug:
+#       msg: > 
+#        Description:
+#           If an unauthorized user obtains access to a private key without a passcode, that user would have
+#           unauthorized access to any system where the associated public key has been installed.
+#         Check:
+#           Verify the SSH private key files have a passcode.
+
+#           For each private key stored on the system, use the following command:
+
+#           $ sudo ssh-keygen -y -f /path/to/file
+
+#           If the contents of the key are displayed, this is a finding.
+#         Fix:
+#           Create a new private and public key pair that utilizes a passcode with the following command:
+
+#           $ sudo ssh-keygen -n [passphrase]

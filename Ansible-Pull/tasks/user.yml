@@ -1,0 +1,103 @@
+---
+
+- name: "Check for user - {{ username }}"
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ username }}"
+  changed_when: false
+  ignore_errors: true
+  register: passwd_result
+
+- name: "Add the {{ username }}"
+  when: passwd_result is failed
+  ansible.builtin.user:
+    name: "{{ username }}"
+    comment: "{{ comment }}"
+    system: "{{ system }}"
+    uid: "{{ uid }}"
+    password: "{{ '%s' |format(password) | password_hash('sha512', 'r4nd0m533d') }}"
+    create_home: true
+    home: "{{ home }}"
+    shell: "{{ shell }}"
+    generate_ssh_key: true
+    ssh_key_bits: 4096
+    ssh_key_comment: "{{ username }}@{{ ansible_facts['nodename'] }}"
+    state: present
+
+- name: "Update the {{ username }}"
+  when: passwd_result is not false
+  ansible.builtin.user:
+    name: "{{ username }}"
+    comment: "{{ comment }}"
+    shell: "{{ shell }}"
+    password: "{{ '%s' | format(password) | password_hash('sha512', 'r4nd0m533d') }}"
+
+- name: "Update {{ home }} permissions"
+  changed_when: false
+  ansible.builtin.file:
+    path: "{{ home }}"
+    recurse: true
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: "Create directories in {{ home }}"
+  ansible.builtin.file:
+    path: "{{ directories }}"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0700
+  loop_control:
+    loop_var: directories
+  with_items:
+    - "{{ home }}/bin"
+    - "{{ home }}/bin/lib"
+    - "{{ home }}/logs"
+    - "{{ home }}/.ssh"
+
+- name: "Create a public key file"
+  ansible.builtin.copy:
+    dest: "{{ home }}/.ssh/id_{{ username }}.pub"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0400'
+    force: true
+    content: "{{ ssh_key }}"
+
+- name: "Create a authorized_keys file"
+  ansible.builtin.copy:
+    dest: "{{ home }}/.ssh/authorized_keys"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0400'
+    force: true
+    content: "{{ ssh_key }}"
+
+- name: "Create a key file"
+  ansible.builtin.copy:
+    dest: "{{ home }}/.ssh/id_{{ username }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0400'
+    force: true
+    content: "{{ ssh_private_key }}"
+
+- name: "Create ssh config"
+  ansible.builtin.template:
+    src:  sshconfig.j2
+    dest: "{{ home }}/.ssh/config"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0600'
+    force: false
+
+- name: "Ensure known_hosts file exists"
+  ansible.builtin.file:
+    dest: "{{ home }}/.ssh/known_hosts"
+    force: true
+    group: "{{ username }}"
+    owner: "{{ username }}"
+    mode: 0600
+    modification_time: preserve
+    access_time: preserve
+    state: touch

@@ -1,0 +1,296 @@
+# ---
+
+- name: "All RHEL 8 local disk partitions must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information that requires at rest protection."
+  tags:
+      - V-230224
+      - medium
+      - RHEL-08-010030
+      - SV-230224r809268_rule
+      - C-32893r809267_chk
+      - F-32868r567419_fix
+      - MAC-1_Classified
+      - MAC-1_Public
+      - MAC-1_Sensitive
+      - MAC-2_Classified
+      - MAC-2_Public
+      - MAC-2_Sensitive
+      - MAC-3_Classified
+      - MAC-3_Public
+      - MAC-3_Sensitive
+  block:
+    ansible.builtin.debug:
+      msg: > 
+       Description:
+          RHEL 8 systems handling data requiring "data at rest" protections must employ cryptographic
+          mechanisms to prevent unauthorized disclosure and modification of the information at rest.
+
+          Selection of a cryptographic mechanism is based on the need to protect the integrity of
+          organizational information. The strength of the mechanism is commensurate with the security category
+          and/or classification of the information. Organizations have the flexibility to either encrypt all
+          information on storage devices (i.e., full disk encryption) or encrypt specific data structures
+          (e.g., files, records, or fields).
+
+          Satisfies: SRG-OS-000185-GPOS-00079, SRG-OS-000404-GPOS-00183, SRG-OS-000405-GPOS-00184
+        Check:
+          Verify RHEL 8 prevents unauthorized disclosure or modification of all information requiring at-rest
+          protection by using disk encryption.
+
+          If there is a documented and approved reason for not having data-at-rest encryption, this
+          requirement is Not Applicable.
+
+          Verify all system partitions are encrypted with the following command:
+
+          $ sudo blkid
+
+          /dev/mapper/rhel-root:  UUID="67b7d7fe-de60-6fd0-befb-e6748cf97743" TYPE="crypto_LUKS"
+
+          Every persistent disk partition present must be of type "crypto_LUKS". If any partitions other than
+          the boot partition or pseudo file systems (such as /proc or /sys) are not type "crypto_LUKS", ask
+          the administrator to indicate how the partitions are encrypted.  If there is no evidence that these
+          partitions are encrypted, this is a finding.
+        Fix:
+          Configure RHEL 8 to prevent unauthorized modification of all information at rest by using disk
+          encryption.
+
+          Encrypting a partition in an already installed system is more difficult, because existing partitions
+          will need to be resized and changed. To encrypt an entire partition, dedicate a partition for
+          encryption in the partition layout.
+
+- name: "RHEL 8 must use a separate file system for /var."
+  tags:
+      - V-230292
+      - low
+      - RHEL-08-010540
+      - SV-230292r627750_rule
+      - C-32961r567622_chk
+      - F-32936r567623_fix
+      - MAC-1_Classified"
+      - MAC-1_Public"
+      - MAC-1_Sensitive"
+      - MAC-2_Classified"
+      - MAC-2_Public"
+      - MAC-2_Sensitive"
+      - MAC-3_Classified"
+      - MAC-3_Public"
+      - MAC-3_Sensitive"
+  block:
+    ansible.builtin.debug:
+      msg: > 
+       Description:
+          The use of separate file systems for different paths can protect the system from failures resulting
+          from a file system becoming full or failing.
+        Check:
+          Verify that a separate file system/partition has been created for "/var".
+
+          Check that a file system/partition has been created for "/var" with the following command:
+
+          $ sudo grep /var /etc/fstab
+
+          UUID=c274f65f /var xfs noatime,nobarrier 1 2
+
+          If a separate entry for "/var" is not in use, this is a finding.
+        Fix:
+          Migrate the "/var" path onto a separate file system.
+
+- name: "RHEL 8 must use a separate file system for /var/log."
+  tags:
+      - V-230293
+      - low
+      - RHEL-08-010541
+      - SV-230293r627750_rule
+      - C-32962r567625_chk
+      - F-32937r567626_fix
+      - MAC-1_Classified"
+      - MAC-1_Public"
+      - MAC-1_Sensitive"
+      - MAC-2_Classified"
+      - MAC-2_Public"
+      - MAC-2_Sensitive"
+      - MAC-3_Classified"
+      - MAC-3_Public"
+      - MAC-3_Sensitive"
+  block:
+    ansible.builtin.debug:
+      msg: > 
+       Description:
+          The use of separate file systems for different paths can protect the system from failures resulting
+          from a file system becoming full or failing.
+        Check:
+          Verify that a separate file system/partition has been created for "/var/log".
+
+          Check that a file system/partition has been created for "/var/log" with the following command:
+
+          $ sudo grep /var/log /etc/fstab
+
+          UUID=c274f65f /var/log xfs noatime,nobarrier 1 2
+
+          If a separate entry for "/var/log" is not in use, this is a finding.
+        Fix:
+          Migrate the "/var/log" path onto a separate file system.
+
+- name: "RHEL 8 must use a separate file system for the system audit data path."
+  tags:
+      - V-230294
+      - low
+      - RHEL-08-010542
+      - SV-230294r627750_rule
+      - C-32963r567628_chk
+      - F-32938r567629_fix
+      - MAC-1_Classified"
+      - MAC-1_Public"
+      - MAC-1_Sensitive"
+      - MAC-2_Classified"
+      - MAC-2_Public"
+      - MAC-2_Sensitive"
+      - MAC-3_Classified"
+      - MAC-3_Public"
+      - MAC-3_Sensitive"
+  block:
+    ansible.builtin.debug:
+      msg: > 
+       Description:
+          The use of separate file systems for different paths can protect the system from failures resulting
+          from a file system becoming full or failing.
+        Check:
+          Verify that a separate file system/partition has been created for the system audit data path with
+          the following command:
+
+          Note: /var/log/audit is used as the example as it is a common location.
+
+          $ sudo grep /var/log/audit /etc/fstab
+
+          UUID=3645951a /var/log/audit xfs defaults 1 2
+
+          If an entry for "/var/log/audit" does not exist, ask the System Administrator if the system audit
+          logs are being written to a different file system/partition on the system, then grep for that file
+          system/partition.
+
+          If a separate file system/partition does not exist for the system audit data path, this is a
+          finding.
+        Fix:
+          Migrate the system audit data path onto a separate file system.
+
+- name: "RHEL 8 must use a separate file system for /var/tmp."
+  tags:
+      - V-244529
+      - medium
+      - RHEL-08-010544
+      - SV-244529r743836_rule
+      - C-47804r743834_chk
+      - F-47761r743835_fix
+      - MAC-1_Classified"
+      - MAC-1_Public"
+      - MAC-1_Sensitive"
+      - MAC-2_Classified"
+      - MAC-2_Public"
+      - MAC-2_Sensitive"
+      - MAC-3_Classified"
+      - MAC-3_Public"
+      - MAC-3_Sensitive"
+  block:
+    ansible.builtin.debug:
+      msg: > 
+       Description:
+          The use of separate file systems for different paths can protect the system from failures resulting
+          from a file system becoming full or failing.
+        Check:
+          Verify that a separate file system/partition has been created for "/var/tmp".
+
+          Check that a file system/partition has been created for "/var/tmp" with the following command:
+
+          $ sudo grep /var/tmp /etc/fstab
+
+          UUID=c274f65f /var/tmp xfs noatime,nobarrier 1 2
+
+          If a separate entry for "/var/tmp" is not in use, this is a finding.
+        Fix:
+          Migrate the "/var/tmp" path onto a separate file system.
+
+- name: "A separate RHEL 8 filesystem must be used for user home directories (such as /home or an equivalent)."
+  tags:
+      - V-230328
+      - medium
+      - RHEL-08-010800
+      - SV-230328r627750_rule
+      - C-32997r567730_chk
+      - F-32972r567731_fix
+      - MAC-1_Classified"
+      - MAC-1_Public"
+      - MAC-1_Sensitive"
+      - MAC-2_Classified"
+      - MAC-2_Public"
+      - MAC-2_Sensitive"
+      - MAC-3_Classified"
+      - MAC-3_Public"
+      - MAC-3_Sensitive"
+  block:
+    ansible.builtin.debug:
+      msg: > 
+       Description:
+          The use of separate file systems for different paths can protect the system from failures resulting
+          from a file system becoming full or failing.
+        Check:
+          Verify that a separate file system/partition has been created for non-privileged local interactive
+          user home directories.
+
+          Check the home directory assignment for all non-privileged users, users with a User Identifier (UID)
+          greater than 1000, on the system with the following command:
+
+          $ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1,$3,$6}' /etc/passwd
+
+          adamsj 1001 /home/adamsj
+          jacksonm 1002 /home/jacksonm
+          smithj 1003 /home/smithj
+
+          The output of the command will give the directory/partition that contains the home directories for
+          the non-privileged users on the system (in this example, "/home") and users’ shell. All accounts
+          with a valid shell (such as /bin/bash) are considered interactive users.
+
+          Check that a file system/partition has been created for the non-privileged interactive users with
+          the following command:
+
+          Note: The partition of "/home" is used in the example.
+
+          $ sudo grep /home /etc/fstab
+
+          UUID=333ada18 /home ext4 noatime,nobarrier,nodev 1 2
+
+          If a separate entry for the file system/partition containing the non-privileged interactive user
+          home directories does not exist, this is a finding.
+        Fix:
+          Migrate the "/home" directory onto a separate file system/partition.
+
+- name: "A separate RHEL 8 filesystem must be used for the /tmp directory."
+  tags:
+      - V-230295
+      - medium
+      - RHEL-08-010543
+      - SV-230295r627750_rule
+      - C-32964r567631_chk
+      - F-32939r567632_fix
+      - MAC-1_Classified"
+      - MAC-1_Public"
+      - MAC-1_Sensitive"
+      - MAC-2_Classified"
+      - MAC-2_Public"
+      - MAC-2_Sensitive"
+      - MAC-3_Classified"
+      - MAC-3_Public"
+      - MAC-3_Sensitive"
+  block:
+    ansible.builtin.debug:
+      msg: > 
+       Description:
+          The use of separate file systems for different paths can protect the system from failures resulting
+          from a file system becoming full or failing.
+        Check:
+          Verify that a separate file system/partition has been created for non-privileged local interactive
+          user home directories.
+
+          $ sudo grep /tmp /etc/fstab
+
+          /dev/mapper/rhel-tmp  /tmp  xfs   defaults,nodev,nosuid,noexec 0 0
+
+          If a separate entry for the file system/partition "/tmp" does not exist, this is a finding.
+        Fix:
+          Migrate the "/tmp" directory onto a separate file system/partition.

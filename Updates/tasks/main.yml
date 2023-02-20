@@ -1,0 +1,8 @@
+---
+
+- name: "Gather the package facts"
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: "Begin system updates"
+  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"

@@ -1,0 +1,1846 @@
+---
+
+- name: "# Install and system setup"
+  block:
+
+    - name: "The RHEL 8 audit package must be installed."
+      tags:
+        - V-230411
+        - medium
+        - RHEL-08-030180
+        - SV-230411r744000_rule
+        - C-33080r743999_chk
+        - F-33055r646880_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000038-GPOS-00016
+        - SRG-OS-000039-GPOS-00017
+        - SRG-OS-000040-GPOS-00018
+        - SRG-OS-000041-GPOS-00019
+        - SRG-OS-000042-GPOS-00021
+        - SRG-OS-000051-GPOS-00024
+        - SRG-OS-000054-GPOS-00025
+        - SRG-OS-000122-GPOS-00063
+        - SRG-OS-000254-GPOS-00095
+        - SRG-OS-000255-GPOS-00096
+        - SRG-OS-000337-GPOS-00129
+        - SRG-OS-000348-GPOS-00136
+        - SRG-OS-000349-GPOS-00137
+        - SRG-OS-000350-GPOS-00138
+        - SRG-OS-000351-GPOS-00139
+        - SRG-OS-000352-GPOS-00140
+        - SRG-OS-000353-GPOS-00141
+        - SRG-OS-000354-GPOS-00142
+        - SRG-OS-000358-GPOS-00145
+        - SRG-OS-000365-GPOS-00152
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000475-GPOS-00220
+        - V-230477
+        - medium
+        - RHEL-08-030670
+        - SV-230477r627750_rule
+        - C-33146r568177_chk
+        - F-33121r568178_fix
+        - V-230478
+        - medium
+        - RHEL-08-030680
+        - SV-230478r744011_rule
+        - C-33147r744009_chk
+        - F-33122r744010_fix
+        - V-230228
+        - medium
+        - RHEL-08-010070
+        - SV-230228r627750_rule
+        - C-32897r567430_chk
+        - F-32872r567431_fix
+      ansible.builtin.package:
+        update_cache: true
+        state: present
+        name:
+          - audit
+          - rsyslog
+          - rsyslog-gnutls
+
+    - name: "RHEL 8 audit records must contain information to establish what type of events occurred, the source of events, where events occurred, and the outcome of events."
+      tags:
+        - V-244542
+        - medium
+        - RHEL-08-030181
+        - SV-244542r818838_rule
+        - C-47817r818837_chk
+        - F-47774r743874_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000038-GPOS-00016
+        - SRG-OS-000039-GPOS-00017
+        - SRG-OS-000040-GPOS-00018
+        - SRG-OS-000041-GPOS-00019
+        - SRG-OS-000042-GPOS-00021
+        - SRG-OS-000051-GPOS-00024
+        - SRG-OS-000054-GPOS-00025
+        - SRG-OS-000122-GPOS-00063
+        - SRG-OS-000254-GPOS-00095
+        - SRG-OS-000255-GPOS-00096
+        - SRG-OS-000337-GPOS-00129
+        - SRG-OS-000348-GPOS-00136
+        - SRG-OS-000349-GPOS-00137
+        - SRG-OS-000350-GPOS-00138
+        - SRG-OS-000351-GPOS-00139
+        - SRG-OS-000352-GPOS-00140
+        - SRG-OS-000353-GPOS-00141
+        - SRG-OS-000354-GPOS-00142
+        - SRG-OS-000358-GPOS-00145
+        - SRG-OS-000365-GPOS-00152
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000475-GPOS-00220
+      ansible.builtin.service:
+        name: auditd.service
+        # state: restarted
+        enabled: true
+
+    - name: >
+        "RHEL 8 must allow only the Information System Security Manager (ISSM)
+        (or individuals or roles appointed by the ISSM) to select which auditable events are to be audited.
+        RHEL 8 audit logs must be owned by root to prevent unauthorized read access.
+      tags:
+        - V-230471
+        - medium
+        - RHEL-08-030610
+        - SV-230471r627750_rule
+        - C-33140r568159_chk
+        - F-33115r568160_fix
+        - V-230397
+        - medium
+        - RHEL-08-030080
+        - V-230397r627750_rule
+        - C-33066r567937_chk
+        - F-33041r567938_fix
+        - SRG-OS-000057-GPOS-00027
+        - SRG-OS-000058-GPOS-00028
+        - SRG-OS-000059-GPOS-00029
+        - SRG-OS-000206-GPOS-00084
+      ansible.builtin.file:
+        dest: "{{ V230471 }}"
+        state: directory
+        recurse: false
+        owner: root
+        group: root
+        mode: 0700
+        modification_time: preserve
+        access_time: preserve
+      changed_when: false
+      loop_control:
+        loop_var: V230471
+      loop:
+        - '/etc/audit/rules.d'
+        - '/etc/audit'
+        - '/var/log/audit'
+
+    - name: >
+        "RHEL 8 audit logs must have a mode of 0600 or less permissive to prevent unauthorized read access.
+        RHEL 8 audit log directory must be owned by root to prevent unauthorized read access.
+        RHEL 8 audit log directory must be group-owned by root to prevent unauthorized read access.
+        RHEL 8 audit log directory must have a mode of 0700 or less permissive to prevent unauthorized read access."
+      tags:
+        - V-230396
+        - medium
+        - RHEL-08-030070
+        - V-230396r627750_rule
+        - C-33065r567934_chk
+        - F-33040r567935_fix
+        - SRG-OS-000057-GPOS-00027
+        - SRG-OS-000058-GPOS-00028
+        - SRG-OS-000059-GPOS-00029
+        - SRG-OS-000206-GPOS-00084
+        - V-230399
+        - RHEL-08-030100
+        - V-230399r627750_rule
+        - C-33068r567943_chk
+        - F-33043r567944_fix
+        - SRG-OS-000057-GPOS-00027
+        - SRG-OS-000058-GPOS-00028
+        - SRG-OS-000059-GPOS-00029
+        - V-230400
+        - RHEL-08-030110
+        - V-230400r627750_rule
+        - C-33069r567946_chk
+        - F-33044r567947_fix
+        - SRG-OS-000057-GPOS-00027
+        - SRG-OS-000058-GPOS-00028
+        - SRG-OS-000059-GPOS-00029
+        - SV-230401r627750_rule
+        - C-33070r567949_chk
+        - F-33045r567950_fix
+      ansible.builtin.file:
+        path: "{{ V230396 }}"
+        owner: root
+        group: root
+        mode: 0600
+        modification_time: preserve
+        access_time: preserve
+      changed_when: false
+      loop_control:
+        loop_var: V230396
+      with_fileglob:
+        - '/etc/audit/rules.d/*'
+        - '/etc/audit/*'
+        - '/var/log/audit/*'
+
+    - name: >
+        "RHEL 8 audit tools must have a mode of 0755 or less permissive.
+        RHEL 8 audit tools must be group-owned by root.
+        RHEL 8 audit tools must be owned by root."
+      tags:
+        - V-230472
+        - medium
+        - RHEL-08-030620
+        - SV-230472r627750_rule
+        - C-33141r568162_chk
+        - F-33116r568163_fix
+        - V-230473
+        - V-230474
+        - RHEL-08-030630
+        - RHEL-08-030640
+        - SV-230473r744008_rule
+        - C-33142r744007_chk
+        - F-33117r568166_fix
+        - SV-230474r627750_rule
+        - C-33143r568168_chk
+        - F-33118r568169_fix
+        - SRG-OS-000256-GPOS-00097
+        - SRG-OS-000257-GPOS-00098
+        - SRG-OS-000258-GPOS-00099
+        - SRG-OS-000256-GPOS-00097
+        - SRG-OS-000257-GPOS-00098
+        - SRG-OS-000258-GPOS-00099
+      ansible.builtin.file:
+        path: "{{ V230472.audit_tool }}"
+        owner: root
+        group: root
+        mode: "{{ V230472.mode }}"
+        modification_time: preserve
+        access_time: preserve
+      changed_when: false
+      loop_control:
+        loop_var: V230472
+      loop:
+        - { mode: 755, audit_tool: '/sbin/auditctl' }
+        - { mode: 755, audit_tool: '/sbin/aureport'}
+        - { mode: 755, audit_tool: '/sbin/ausearch' }
+        - { mode: 755, audit_tool: '/sbin/auditd' }
+        - { mode: 755, audit_tool: '/sbin/rsyslogd' }
+        - { mode: 755, audit_tool: '/sbin/augenrules' }
+        - { mode: 750, audit_tool: '/sbin/autrace' }
+
+    - name: >
+        The RHEL 8 Information System Security Officer (ISSO) and System Administrator (SA) (at a minimum) must have mail aliases
+        to be notified of an audit processing failure.
+      tags:
+        - V-230389
+        - medium
+        - RHEL-08-030030
+        - SV-230389r627750_rule
+        - C-33058r567913_chk
+        - F-33033r567914_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/aliases"
+        create: true
+        mode: 0640
+        regex: "{{ V230389.regex }}"
+        line: "{{ V230389.line }}"
+      loop_control:
+        loop_var: V230389
+      loop:
+        - { regex: '^(#*|#\s*|\s*)postmaster', line: "postmaster = root" }
+
+- name: "# Setup boot auditing."
+  block:
+
+    - name: "RHEL 8 must allocate an audit_backlog_limit of sufficient size to capture processes that start prior to the audit daemon."
+      tags:
+        - V-230469
+        - low
+        - RHEL-08-030602
+        - SV-230469r854039_rule
+        - C-33138r792905_chk
+        - F-33113r568154_fix
+      block:
+              # Allocating an audit_backlog_limit of sufficient size is critical in maintaining a stable boot
+              # process.  With an insufficient limit allocated, the system is susceptible to boot failures and
+              # crashes.
+
+        - name: "Check Grub options"
+          ansible.builtin.set_fact:
+            grub_defaults: "{{ lookup('ansible.builtin.file', '/etc/default/grub') }}"
+
+        - name: "Debug"
+          ansible.builtin.debug:
+            msg: "{{ grub_defaults }}"
+          when: '"audit_backlog_limit" not in grub_defaults'
+
+        - name: "Update Grub defaults"
+          ansible.builtin.replace:
+            path: /etc/default/grub
+            regexp: '^(#*|#\s*|\s*)GRUB_CMDLINE_LINUX(.*)"'
+            replace: 'GRUB_CMDLINE_LINUX\2 audit_backlog_limit=8192"'
+          when: '"audit_backlog_limit" not in grub_defaults'
+
+        - name: "Use Grubby to update kernel parms"
+          ansible.builtin.command: 'grubby --update-kernel=ALL --args="audit_backlog_limit=8192"'
+          when: '"audit_backlog_limit" not in grub_defaults'
+
+    - name: "RHEL 8 must enable auditing of processes that start prior to the audit daemon."
+      tags:
+        - V-230468
+        - low
+        - RHEL-08-030601
+        - SV-230468r792904_rule
+        - C-33137r792903_chk
+        - F-33112r568151_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215,
+        - SRG-OS-000473-GPOS-0021
+      block:
+
+        - name: "Check Grub options"
+          ansible.builtin.set_fact:
+            grub_defaults: "{{ lookup('ansible.builtin.file', '/etc/default/grub') }}"
+
+        - name: "Debug"
+          ansible.builtin.debug:
+            msg: "{{ grub_defaults }}"
+          when: '"audit_backlog_limit" not in grub_defaults'
+
+        - name: "Update Grub defaults"
+          ansible.builtin.replace:
+            path: /etc/default/grub
+            regexp: '^(#*|#\s*|\s*)GRUB_CMDLINE_LINUX(.*)"'
+            replace: 'GRUB_CMDLINE_LINUX\2 audit=1"'
+          when: '"audit=" not in grub_defaults'
+
+        - name: "Use Grubby to update kernel parms"
+          ansible.builtin.command: 'grubby --update-kernel=ALL --args="audit=1"'
+          when: '"audit=" not in grub_defaults'
+
+- name: "# Setting up /etc/audit/auditd.conf"
+  block:
+
+    - name: "The RHEL 8 System must take appropriate action when an audit processing failure occurs."
+      tags:
+        - V-230390
+        - medium
+        - RHEL-08-030040
+        - V-230390r627750_rule
+        - C-33059r567916_chk
+        - F-33034r567917_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230390.regex }}"
+        line: "{{ V230390.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230390
+      loop:
+        - { regex: '^(#*|#\s*|\s*)disk_error_action(\s*)', line: "disk_error_action = HALT" }
+          # Can be set to "SYSLOG", "SINGLE", or "HALT".
+          # SYSLOG and SINGLE should only be used if the operating system is configured to notify system administration staff and ISSO staff
+
+    - name: "The RHEL 8 audit system must take appropriate action when the audit storage volume is full."
+      tags:
+        - V-230392
+        - medium
+        - RHEL-08-030060
+        - V-230392r627750_rule
+        - C-33061r567922_chk
+        - F-33036r567923_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230392.regex }}"
+        line: "{{ V230392.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230392
+      loop:
+        - { regex: '^(#*|#\s*|\s*)disk_full_action', line: "disk_full_action = HALT" }
+          # Can be set to "SYSLOG", "SINGLE", or "HALT".
+          # SYSLOG and SINGLE should only be used if the operating system is configured to notify system administration staff and ISSO staff
+
+    - name: "The RHEL 8 audit system must audit local events."
+      tags:
+        - V-230393
+        - medium
+        - RHEL-08-030061
+        - V-230393r627750_rule
+        - C-33062r567925_chk
+        - F-33037r567926_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230393.regex }}"
+        line: "{{ V230393.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230393
+      loop:
+        - { regex: '^(#*|#\s*|\s*)local_events', line: "local_events = yes" }
+
+    - name: "RHEL 8 must label all off-loaded audit logs before sending them to the central log server."
+      tags:
+        - V-230394
+        - medium
+        - RHEL-08-030062
+        - V-230394r854038_rule
+        - C-33063r567928_chk
+        - F-33038r567929_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230394.regex }}"
+        line: "{{ V230394.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230394
+      loop:
+        - { regex: '^(#*|#\s*|\s*)name_format', line: "name_format = hostname" }
+
+    - name: "RHEL 8 must resolve audit information before writing to disk."
+      tags:
+        - V-230395
+        - low
+        - RHEL-08-030063
+        - V-230395r627750_rule
+        - C-33064r567931_chk
+        - F-33039r567932_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230395.regex }}"
+        line: "{{ V230395.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230395
+      loop:
+        - { regex: '^(#*|#\s*|\s*)log_format', line: "log_format = ENRICHED" }
+
+    - name: "RHEL 8 audit logs must be group-owned by root to prevent unauthorized read access."
+      tags:
+        - V-230398
+        - medium
+        - RHEL-08-030090
+        - V-230398r627750_rule
+        - C-33067r567940_chk
+        - F-33042r567941_fix
+        - SRG-OS-000057-GPOS-00027
+        - SRG-OS-000058-GPOS-00028
+        - SRG-OS-000059-GPOS-00029
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230396.regex }}"
+        line: "{{ V230396.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230396
+      loop:
+        - { regex: '^(#*|#\s*|\s*)log_group', line: "log_group = root" }
+
+    - name: "The RHEL 8 System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) must be alerted of an audit processing failure event."
+      tags:
+        - V-230388
+        - medium
+        - RHEL-08-030020
+        - SV-230388r627750_rule
+        - C-33057r567910_chk
+        - F-33032r567911_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230396.regex }}"
+        line: "{{ V230396.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230396
+      loop:
+        - { regex: '^(#*|#\s*|\s*)action_mail_acct', line: "action_mail_acct = root" }
+
+    - name: "RHEL 8 must notify the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) when allocated audit record storage volume 75 percent utilization."
+      tags:
+        - V-244543
+        - medium
+        - RHEL-08-030731
+        - SV-244543r854072_rule
+        - C-47818r743876_chk
+        - F-47775r743877_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V244543.regex }}"
+        line: "{{ V244543.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V244543
+      loop:
+        - { regex: '^(#*|#\s*|\s*)space_left_action', line: "space_left_action = email" }
+
+    - name: "RHEL 8 must take appropriate action when the internal event queue is full."
+      tags:
+        - V-230480
+        - medium
+        - RHEL-08-030700
+        - SV-230480r854042_rule
+        - C-33149r568186_chk
+        - F-33124r568187_fix
+        - SRG-OS-000342-GPOS-00133
+        - SRG-OS-000479-GPOS-00224
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V244543.regex }}"
+        line: "{{ V244543.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V244543
+      loop:
+        - { regex: '^(#*|#\s*|\s*)overflow_action', line: "overflow_action = syslog" }
+          # Valid settings are "syslog", "single", and "halt"
+
+    - name: "RHEL 8 must take action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity."
+      tags:
+        - V-230483
+        - medium
+        - RHEL-08-030730
+        - SV-230483r854045_rule
+        - C-33152r744012_chk
+        - F-33127r744013_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/auditd.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V244543.regex }}"
+        line: "{{ V244543.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V244543
+      loop:
+        - { regex: '^(#*|#\s*|\s*)space_left ', line: "space_left = 75" }
+
+- name: "# Setting up /etc/audit/rules.d/audit.rules"
+  block:
+
+    - name: "The RHEL 8 audit system must be configured to audit the execution of privileged functions and prevent all software from executing at higher privilege levels than users executing the software."
+      tags:
+        - V-230386
+        - medium
+        - RHEL-08-030000
+        - SV-230386r854037_rule
+        - C-33055r567904_chk
+        - F-33030r567905_fix
+        - SRG-OS-000326-GPOS-00126
+        - SRG-OS-000327-GPOS-00127
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230386.regex }}"
+        line: "{{ V230386.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230386
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv', line: "-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k execpriv" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv', line: "-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k execpriv" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv', line: "-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k execpriv" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv', line: "-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k execpriv" }
+
+    - name: "The RHEL 8 audit system must be configured to audit any usage of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls."
+      tags:
+        - V-230413
+        - medium
+        - RHEL-08-030200
+        - SV-230413r810463_rule
+        - C-33082r809293_chk
+        - F-33057r809294_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000458-GPOS-00203
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000463-GPOS-00207
+        - SRG-OS-000468-GPOS-00212
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000474-GPOS-00219
+        - SRG-OS-000466-GPOS-00210
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230413.regex }}"
+        line: "{{ V230413.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230413
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod', line: "-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod', line: "-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod" }
+
+    - name: "RHEL 8 audit system must protect logon UIDs from unauthorized change."
+      tags:
+        - V-230403
+        - medium
+        - RHEL-08-030122
+        - SV-230403r627750_rule
+        - C-33072r567955_chk
+        - F-33047r567956_fix
+        - SRG-OS-000057-GPOS-00027
+        - SRG-OS-000058-GPOS-00028
+        - SRG-OS-000059-GPOS-00029
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230403.regex }}"
+        line: "{{ V230403.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230403
+      loop:
+        - { regex: '^(#*|#\s*|\s*)--loginuid-immutable', line: "--loginuid-immutable" }
+
+    - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/shadow."
+      tags:
+        - V-230404
+        - medium
+        - RHEL-08-030130
+        - SV-230404r627750_rule
+        - C-33073r567958_chk
+        - F-33048r567959_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000004-GPOS-00004
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000470-GPOS-00214
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000239-GPOS-00089
+        - SRG-OS-000240-GPOS-00090
+        - SRG-OS-000241-GPOS-00091
+        - SRG-OS-000303-GPOS-00120
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000466-GPOS-00210
+        - SRG-OS-000476-GPOS-00221
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230404.regex }}"
+        line: "{{ V230404.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230404
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /etc/shadow -p wa -k identity', line: "-w /etc/shadow -p wa -k identity" }
+
+    - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/security/opasswd."
+      tags:
+        - V-230405
+        - medium
+        - RHEL-08-030140
+        - SV-230405r627750_rule
+        - C-33074r567961_chk
+        - F-33049r567962_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000004-GPOS-00004
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000470-GPOS-00214
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000239-GPOS-00089
+        - SRG-OS-000240-GPOS-00090
+        - SRG-OS-000241-GPOS-00091
+        - SRG-OS-000303-GPOS-00120
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000476-GPOS-00221
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230405.regex }}"
+        line: "{{ V230405.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230405
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /etc/security/opasswd -p wa -k identity', line: "-w /etc/security/opasswd -p wa -k identity" }
+
+    - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd."
+      tags:
+        - V-230406
+        - medium
+        - RHEL-08-030150
+        - SV-230406r627750_rule
+        - C-33075r567964_chk
+        - F-33050r567965_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000004-GPOS-00004
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000470-GPOS-00214
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000239-GPOS-00089
+        - SRG-OS-000240-GPOS-00090
+        - SRG-OS-000241-GPOS-00091
+        - SRG-OS-000303-GPOS-00120
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000466-GPOS-00210
+        - SRG-OS-000476-GPOS-00221
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230406.regex }}"
+        line: "{{ V230406.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230406
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /etc/passwd -p wa -k identity', line: "-w /etc/passwd -p wa -k identity" }
+
+    - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow."
+      tags:
+        - V-230407
+        - medium
+        - RHEL-08-030160
+        - SV-230407r627750_rule
+        - C-33076r567967_chk
+        - F-33051r567968_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000004-GPOS-00004
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000470-GPOS-00214
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000239-GPOS-00089
+        - SRG-OS-000240-GPOS-00090
+        - SRG-OS-000241-GPOS-00091
+        - SRG-OS-000303-GPOS-00120
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000466-GPOS-00210
+        - SRG-OS-000476-GPOS-00221
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230407.regex }}"
+        line: "{{ V230407.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230407
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /etc/gshadow -p wa -k identity', line: "-w /etc/gshadow -p wa -k identity" }
+
+    - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group."
+      tags:
+        - V-230408
+        - medium
+        - RHEL-08-030170
+        - SV-230408r627750_rule
+        - C-33077r567970_chk
+        - F-33052r567971_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000004-GPOS-00004
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000470-GPOS-00214
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000239-GPOS-00089
+        - SRG-OS-000240-GPOS-00090
+        - SRG-OS-000241-GPOS-00091
+        - SRG-OS-000303-GPOS-00120
+        - SRG-OS-000304-GPOS-00121
+        - CCI-002884
+        - SRG-OS-000466-GPOS-00210
+        - SRG-OS-000476-GPOS-00221
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230408.regex }}"
+        line: "{{ V230408.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230408
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /etc/group -p wa -k identity', line: "-w /etc/group -p wa -k identity" }
+
+    - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers."
+      tags:
+        - V-230409
+        - medium
+        - RHEL-08-030171
+        - SV-230409r627750_rule
+        - C-33078r567973_chk
+        - F-33053r567974_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000004-GPOS-00004
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000392-GPOS-00172,SRG-OS-000462-GPOS-00206
+        - SRG-OS-000470-GPOS-00214
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000239-GPOS-00089
+        - SRG-OS-000240-GPOS-00090
+        - SRG-OS-000241-GPOS-00091
+        - SRG-OS-000303-GPOS-00120,SRG-OS-000304-GPOS-00121
+        - CCI-002884
+        - SRG-OS-000466-GPOS-00210
+        - SRG-OS-000476-GPOS-00221
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230409.regex }}"
+        line: "{{ V230409.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230409
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /etc/sudoers -p wa -k identity', line: "-w /etc/sudoers -p wa -k identity" }
+
+    - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers.d/."
+      tags:
+        - V-230410
+        - medium
+        - RHEL-08-030172
+        - SV-230410r627750_rule
+        - C-33079r567976_chk
+        - F-33054r567977_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000004-GPOS-00004
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000304-GPOS-00121
+        - SRG-OS-000392-GPOS-00172,SRG-OS-000462-GPOS-00206
+        - SRG-OS-000470-GPOS-00214
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000239-GPOS-00089
+        - SRG-OS-000240-GPOS-00090
+        - SRG-OS-000241-GPOS-00091
+        - SRG-OS-000303-GPOS-00120,SRG-OS-000304-GPOS-00121
+        - CCI-002884
+        - SRG-OS-000466-GPOS-00210
+        - SRG-OS-000476-GPOS-00221
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230410.regex }}"
+        line: "{{ V230410.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230410
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /etc/sudoers.d/ -p wa -k identity', line: "-w /etc/sudoers.d/ -p wa -k identity" }
+
+    - name: "Successful/unsuccessful uses of the su command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230412
+        - medium
+        - RHEL-08-030190
+        - SV-230412r627750_rule
+        - C-33081r567982_chk
+        - F-33056r567983_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000064-GPOS-0003
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206,SRG-OS-000471-GPOS-00215
+        - SRG-OS-000466-GPOS-00210
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230412.regex }}"
+        line: "{{ V230412.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230412
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-priv_change', line: "-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-priv_change" }
+
+    - name: "Successful/unsuccessful uses of the chage command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230418
+        - medium
+        - RHEL-08-030250
+        - SV-230418r627750_rule
+        - C-33087r568000_chk
+        - F-33062r568001_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000468-GPOS-00212,SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230418.regex }}"
+        line: "{{ V230418.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230418
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage', line: "-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage" }
+
+    - name: "Successful/unsuccessful uses of the chcon command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230419
+        - medium
+        - RHEL-08-030260
+        - SV-230419r627750_rule
+        - C-33088r568003_chk
+        - F-33063r568004_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000468-GPOS-00212,SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230419.regex }}"
+        line: "{{ V230419.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230419
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod" }
+
+    - name: "Successful/unsuccessful uses of the ssh-agent in RHEL 8 must generate an audit record."
+      tags:
+        - V-230421
+        - medium
+        - RHEL-08-030280
+        - SV-230421r627750_rule
+        - C-33090r568009_chk
+        - F-33065r568010_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230421.regex }}"
+        line: "{{ V230421.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230421
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh', line: "-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh" }
+
+    - name: "Successful/unsuccessful uses of the passwd command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230422
+        - medium
+        - RHEL-08-030290
+        - SV-230422r627750_rule
+        - C-33091r568012_chk
+        - F-33066r568013_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230422.regex }}"
+        line: "{{ V230422.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230422
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd', line: "-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd" }
+
+    - name: "Successful/unsuccessful uses of the mount command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230423
+        - medium
+        - RHEL-08-030300
+        - SV-230423r627750_rule
+        - C-33092r568015_chk
+        - F-33067r568016_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230423.regex }}"
+        line: "{{ V230423.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230423
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount', line: "-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount" }
+
+    - name: "Successful/unsuccessful uses of the umount command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230424
+        - medium
+        - RHEL-08-030301
+        - SV-230424r627750_rule
+        - C-33093r568018_chk
+        - F-33068r568019_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230424.regex }}"
+        line: "{{ V230424.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230424
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount', line: "-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount" }
+
+    - name: "Successful/unsuccessful uses of the mount syscall in RHEL 8 must generate an audit record."
+      tags:
+        - V-230425
+        - medium
+        - RHEL-08-030302
+        - SV-230425r627750_rule
+        - C-33094r568021_chk
+        - F-33069r568022_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230425.regex }}"
+        line: "{{ V230425.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230425
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=unset -k privileged-mount', line: "-a always,exit -F arch=b32 -S mount -F auid>=1000 -F auid!=unset -k privileged-mount" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -k privileged-mount', line: "-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -k privileged-mount" }
+
+    - name: "Successful/unsuccessful uses of the unix_update in RHEL 8 must generate an audit record."
+      tags:
+        - V-230426
+        - medium
+        - RHEL-08-030310
+        - SV-230426r627750_rule
+        - C-33095r568024_chk
+        - F-33070r568025_fix
+        - SRG-OS-000062-GPOS-00031, SRG-OS-000037-GPOS-00015, SRG-OS-000042-GPOS-00020, SRG-
+              OS-000062-GPOS-00031, SRG-OS-000392-GPOS-00172, SRG-OS-000462-GPOS-00206, SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230426.regex }}"
+        line: "{{ V230426.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230426
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of postdrop in RHEL 8 must generate an audit record."
+      tags:
+        - V-230427
+        - medium
+        - RHEL-08-030311
+        - SV-230427r627750_rule
+        - C-33096r568027_chk
+        - F-33071r568028_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230427.regex }}"
+        line: "{{ V230427.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230427
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of postqueue in RHEL 8 must generate an audit record."
+      tags:
+        - V-230428
+        - medium
+        - RHEL-08-030312
+        - SV-230428r627750_rule
+        - C-33097r568030_chk
+        - F-33072r568031_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230428.regex }}"
+        line: "{{ V230428.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230428
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of semanage in RHEL 8 must generate an audit record."
+      tags:
+        - V-230429
+        - medium
+        - RHEL-08-030313
+        - SV-230429r627750_rule
+        - C-33098r568033_chk
+        - F-33073r568034_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230429.regex }}"
+        line: "{{ V230429.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230429
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of setfiles in RHEL 8 must generate an audit record."
+      tags:
+        - V-230430
+        - medium
+        - RHEL-08-030314
+        - SV-230430r627750_rule
+        - C-33099r568036_chk
+        - F-33074r568037_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230430.regex }}"
+        line: "{{ V230430.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230430
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of userhelper in RHEL 8 must generate an audit record."
+      tags:
+        - V-230431
+        - medium
+        - RHEL-08-030315
+        - SV-230431r627750_rule
+        - C-33100r568039_chk
+        - F-33075r568040_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230431.regex }}"
+        line: "{{ V230431.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230431
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of setsebool in RHEL 8 must generate an audit record."
+      tags:
+        - V-230432
+        - medium
+        - RHEL-08-030316
+        - SV-230432r627750_rule
+        - C-33101r568042_chk
+        - F-33076r568043_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230432.regex }}"
+        line: "{{ V230432.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230432
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of unix_chkpwd in RHEL 8 must generate an audit record."
+      tags:
+        - V-230433
+        - medium
+        - RHEL-08-030317
+        - SV-230433r627750_rule
+        - C-33102r568045_chk
+        - F-33077r568046_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230433.regex }}"
+        line: "{{ V230433.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230433
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update', line: "-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update" }
+
+    - name: "Successful/unsuccessful uses of the ssh-keysign in RHEL 8 must generate an audit record."
+      tags:
+        - V-230434
+        - medium
+        - RHEL-08-030320
+        - SV-230434r744002_rule
+        - C-33103r568048_chk
+        - F-33078r744001_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230434.regex }}"
+        line: "{{ V230434.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230434
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh', line: "-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh" }
+
+    - name: "Successful/unsuccessful uses of the setfacl command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230435
+        - medium
+        - RHEL-08-030330
+        - SV-230435r627750_rule
+        - C-33104r568051_chk
+        - F-33079r568052_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230435.regex }}"
+        line: "{{ V230435.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230435
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod" }
+
+    - name: "Successful/unsuccessful uses of the pam_timestamp_check command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230436
+        - medium
+        - RHEL-08-030340
+        - SV-230436r627750_rule
+        - C-33105r568054_chk
+        - F-33080r568055_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230436.regex }}"
+        line: "{{ V230436.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230436
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check', line: "-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check" }
+
+    - name: "Successful/unsuccessful uses of the newgrp command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230437
+        - medium
+        - RHEL-08-030350
+        - SV-230437r627750_rule
+        - C-33106r568057_chk
+        - F-33081r568058_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+    #           ansible.builtin.lineinfile:
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230437.regex }}"
+        line: "{{ V230437.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230437
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd', line: "-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd" }
+
+    - name: "Successful/unsuccessful uses of the init_module and finit_module system calls in RHEL 8 must generate an audit record."
+      tags:
+        - V-230438
+        - medium
+        - RHEL-08-030360
+        - SV-230438r810464_rule
+        - C-33107r810447_chk
+        - F-33082r810448_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230438.regex }}"
+        line: "{{ V230438.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230438
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng', line: "-a always,exit -F arch=b32 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng', line: "-a always,exit -F arch=b64 -S init_module,finit_module -F auid>=1000 -F auid!=unset -k module_chng" }
+
+    - name: "Successful/unsuccessful uses of the rename, unlink, rmdir, renameat, and unlinkat system calls in RHEL 8 must generate an audit record."
+      tags:
+        - V-230439
+        - medium
+        - RHEL-08-030361
+        - SV-230439r810465_rule
+        - C-33108r810451_chk
+        - F-33083r809301_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230439.regex }}"
+        line: "{{ V230439.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230439
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete', line: "-a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete ', line: "-a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete" }
+
+    - name: "Successful/unsuccessful uses of the gpasswd command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230444
+        - medium
+        - RHEL-08-030370
+        - SV-230444r627750_rule
+        - C-33113r568078_chk
+        - F-33088r568079_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230444.regex }}"
+        line: "{{ V230444.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230444
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd', line: "-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd" }
+
+    - name: "Successful/unsuccessful uses of the delete_module command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230446
+        - medium
+        - RHEL-08-030390
+        - SV-230446r627750_rule
+        - C-33115r568084_chk
+        - F-33090r568085_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230446.regex }}"
+        line: "{{ V230446.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230446
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng', line: "-a always,exit -F arch=b32 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng', line: "-a always,exit -F arch=b64 -S delete_module -F auid>=1000 -F auid!=unset -k module_chng" }
+
+    - name: "Successful/unsuccessful uses of the crontab command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230447
+        - medium
+        - RHEL-08-030400
+        - SV-230447r627750_rule
+        - C-33116r568087_chk
+        - F-33091r568088_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230447.regex }}"
+        line: "{{ V230447.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230447
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab', line: "-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab" }
+
+    - name: "Successful/unsuccessful uses of the chsh command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230448
+        - medium
+        - RHEL-08-030410
+        - SV-230448r627750_rule
+        - C-33117r568090_chk
+        - F-33092r568091_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230448.regex }}"
+        line: "{{ V230448.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230448
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd', line: "-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd" }
+
+    - name: "Successful/unsuccessful uses of the truncate, ftruncate, creat, open, openat, and open_by_handle_at system calls in RHEL 8 must generate an audit record."
+      tags:
+        - V-230449
+        - medium
+        - RHEL-08-030420
+        - SV-230449r810455_rule
+        - C-33118r810454_chk
+        - F-33093r809304_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000064-GPOS-00033
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230449.regex }}"
+        line: "{{ V230449.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230449
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access', line: "-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access', line: "-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -k perm_access" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access', line: "-a always,exit -F arch=b32 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access', line: "-a always,exit -F arch=b64 -S truncate,ftruncate,creat,open,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -k perm_access" }
+
+    - name: "Successful/unsuccessful uses of the chown, fchown, fchownat, and lchown system calls in RHEL 8 must generate an audit record."
+      tags:
+        - V-230455
+        - medium
+        - RHEL-08-030480
+        - SV-230455r810459_rule
+        - C-33124r810458_chk
+        - F-33099r809307_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000064-GPOS-00033,SRG-OS-000466-GPOS-00210
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230455.regex }}"
+        line: "{{ V230455.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230455
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F arch=b32 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F arch=b64 -S chown,fchown,fchownat,lchown -F auid>=1000 -F auid!=unset -k perm_mod" }
+
+    - name: "Successful/unsuccessful uses of the chmod, fchmod, and fchmodat system calls in RHEL 8 must generate an audit record."
+      tags:
+        - V-230456
+        - medium
+        - RHEL-08-030490
+        - SV-230456r810462_rule
+        - C-33125r810461_chk
+        - F-33100r809310_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000064-GPOS-00033
+        - SRG-OS-000466-GPOS-00210
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230456.regex }}"
+        line: "{{ V230456.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230456
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod" }
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -k perm_mod" }
+
+    - name: "Successful/unsuccessful uses of the sudo command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230462
+        - medium
+        - RHEL-08-030550
+        - SV-230462r627750_rule
+        - C-33131r568132_chk
+        - F-33106r568133_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215,SRG-OS-000466-GPOS-00210
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230462.regex }}"
+        line: "{{ V230462.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230462
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd', line: "-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k priv_cmd" }
+
+    - name: "Successful/unsuccessful uses of the usermod command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230463
+        - medium
+        - RHEL-08-030560
+        - SV-230463r627750_rule
+        - C-33132r568135_chk
+        - F-33107r568136_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215,SRG-OS-000466-GPOS-00210
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230463.regex }}"
+        line: "{{ V230463.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230463
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod', line: "-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod" }
+
+    - name: "Successful/unsuccessful uses of the chacl command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230464
+        - medium
+        - RHEL-08-030570
+        - SV-230464r627750_rule
+        - C-33133r568138_chk
+        - F-33108r568139_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000466-GPOS-00210
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230464.regex }}"
+        line: "{{ V230464.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230464
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod', line: "-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod" }
+
+    - name: "Successful/unsuccessful uses of the kmod command in RHEL 8 must generate an audit record."
+      tags:
+        - V-230465
+        - medium
+        - RHEL-08-030580
+        - SV-230465r627750_rule
+        - C-33134r568141_chk
+        - F-33109r568142_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000471-GPOS-00216
+        - SRG-OS-000477-GPOS-00222
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230465.regex }}"
+        line: "{{ V230465.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230465
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k modules', line: "-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k modules" }
+
+    - name: "Successful/unsuccessful modifications to the faillock log file in RHEL 8 must generate an audit record."
+      tags:
+        - V-230466
+        - medium
+        - RHEL-08-030590
+        - SV-230466r627750_rule
+        - C-33135r568144_chk
+        - F-33110r568145_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000473-GPOS-00218
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230466.regex }}"
+        line: "{{ V230466.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230466
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /var/log/faillock -p wa -k logins', line: "-w /var/log/faillock -p wa -k logins" }
+
+    - name: "Successful/unsuccessful modifications to the lastlog file in RHEL 8 must generate an audit record."
+      tags:
+        - V-230467
+        - medium
+        - RHEL-08-030600
+        - SV-230467r627750_rule
+        - C-33136r568147_chk
+        - F-33111r568148_fix
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000037-GPOS-00015
+        - SRG-OS-000042-GPOS-00020
+        - SRG-OS-000062-GPOS-00031
+        - SRG-OS-000392-GPOS-00172
+        - SRG-OS-000462-GPOS-00206
+        - SRG-OS-000471-GPOS-00215
+        - SRG-OS-000473-GPOS-00218
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230467.regex }}"
+        line: "{{ V230467.line }}"
+      # notify: Restart auditd.service
+      loop_control:
+        loop_var: V230467
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-w /var/log/lastlog -p wa -k logins', line: "-w /var/log/lastlog -p wa -k logins" }
+
+    - name: "RHEL 8 audit system must protect auditing rules from unauthorized change."
+      #   Note: Once set, the system must be rebooted for auditing to be changed.  It is recommended to add
+      #   this option as the last step in securing the system.
+      tags:
+        - V-230402
+        - medium
+        - RHEL-08-030121
+        - SV-230402r627750_rule
+        - C-33071r567952_chk
+        - F-33046r567953_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/audit/rules.d/audit.rules"
+        create: true
+        mode: 0640
+        regex: "{{ V230402.regex }}"
+        line: "{{ V230402.line }}"
+      notify: System Reboot via shutdown
+      loop_control:
+        loop_var: V230402
+      loop:
+        - { regex: '^(#*|#\s*|\s*)-e 2', line: "-e 2" }
