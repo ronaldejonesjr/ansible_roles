@@ -126,7 +126,7 @@
       --clean
       --diff
       --vault-password-file=/opt/ansible/.vault_pass
-      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible_lab.git
+      --url https://{{ token }}@github.com/patriotmercenary/ansible_lab.git
       local.yml >> /opt/ansible/logs/cron.log 2>&1
     state: present
     disabled: false
@@ -143,7 +143,7 @@
       --inventory $(hostname),
       --clean
       --diff
-      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible_lab.git
+      --url https://{{ token }}@github.com/patriotmercenary/ansible_lab.git
       updates.yml >> /opt/ansible/logs/update_cron.log 2>&1
     state: present
     disabled: false
