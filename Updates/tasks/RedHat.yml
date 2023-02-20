@@ -1,0 +1,61 @@
+---
+
+- name: "Install yum-utils packages if missing"
+  when: "'yum-utils' not in ansible_facts.packages"
+  ansible.builtin.package:
+    update_cache: true
+    state: present
+    name:
+      - yum-utils
+
+- name: "Check for pending reboot for updates"  # needs-restarting will exit with a 1 if the system is due for restart.
+  ansible.builtin.command: "needs-restarting -r"
+  changed_when: false
+  ignore_errors: true
+  register: needs_restarting
+
+- name: "Issue Reboot if needed"
+  ansible.builtin.debug:
+    msg: "{{ needs_restarting.stdout }}"
+  changed_when: "needs_restarting.rc != 0"
+  when: "needs_restarting.rc != 0"
+  notify: System Reboot via shutdown
+  tags:
+    - never
+    - autorestart
+
+- name: "Start update progress. (Skipping if reboot is needed first.)"
+  when: "needs_restarting.rc == 0"
+  block:
+
+    - name: "Install updates packages"
+      ansible.builtin.package:
+        update_cache: true
+        update_only: true
+        state: latest
+        name: '*'
+      register: yum_update_status
+
+    - name: Post update process
+      when: "yum_update_status.changed"
+      block:
+
+        - name: "Post update process : Remove packates no longer needed"
+          ansible.builtin.yum:
+            autoremove: true
+
+        - name: "Post update process : Check if a reboot is needed"
+          ansible.builtin.command: "needs-restarting -r"
+          changed_when: false
+          ignore_errors: true
+          register: needs_restarting_post
+
+        - name: "Post update process : Reboot is needed"
+          ansible.builtin.debug:
+            msg: "{{ needs_restarting_post.stdout }}"
+          changed_when: "needs_restarting.rc != 0"
+          when: "needs_restarting_post.rc != 0"
+          notify: System Reboot via shutdown
+          tags:
+            - never
+            - autorestart

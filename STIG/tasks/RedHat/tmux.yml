@@ -1,0 +1,147 @@
+
+---
+
+- name: "RHEL 8 must have the tmux package installed."
+  tags:
+    - V-244537
+    - medium
+    - RHEL-08-020039
+    - SV-244537r743860_rule
+    - C-47812r743858_chk
+    - F-47769r743859_fix
+    - MAC-1_Classified"
+    - MAC-1_Public"
+    - MAC-1_Sensitive"
+    - MAC-2_Classified"
+    - MAC-2_Public"
+    - MAC-2_Sensitive"
+    - MAC-3_Classified"
+    - MAC-3_Public"
+    - MAC-3_Sensitive"
+    - SRG-OS-000028-GPOS-00009
+    - SRG-OS-000030-GPOS-00011
+  when: "'tmux' not in ansible_facts.packages"
+  ansible.builtin.package:
+    update_cache: true
+    state: present
+    name:
+        - tmux
+
+- name: "RHEL 8 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for command line sessions."
+  tags:
+    - V-230348
+    - medium
+    - RHEL-08-020040
+    - SV-230348r743987_rule
+    - C-33017r743985_chk
+    - F-32992r743986_fix
+    - MAC-1_Classified"
+    - MAC-1_Public"
+    - MAC-1_Sensitive"
+    - MAC-2_Classified"
+    - MAC-2_Public"
+    - MAC-2_Sensitive"
+    - MAC-3_Classified"
+    - MAC-3_Public"
+    - MAC-3_Sensitive"
+    - SRG-OS-000028-GPOS-00009
+    - SRG-OS-000030-GPOS-00011
+  ansible.builtin.lineinfile:
+    name: "/etc/tmux.conf"
+    create: true
+    mode: 0644
+    regex: "{{ V230348.regex }}"
+    line: "{{ V230348.line }}"
+  loop_control:
+    loop_var: V230348
+  loop:
+    - { regex: '^(#*|#\s*|\s*)set -g lock-command vlock', line: "set -g lock-command vlock" }
+
+- name: "RHEL 8 must automatically lock command line user sessions after 15 minutes of inactivity."
+  tags:
+      - V-230353
+      - medium
+      - RHEL-08-020070
+      - SV-230353r627750_rule
+      - C-33022r567805_chk
+      - F-32997r567806_fix
+      - MAC-1_Classified
+      - MAC-1_Public
+      - MAC-1_Sensitive
+      - MAC-2_Classified
+      - MAC-2_Public
+      - MAC-2_Sensitive
+      - MAC-3_Classified
+      - MAC-3_Public
+      - MAC-3_Sensitive
+      - SRG-OS-000029-GPOS-00010
+      - SRG-OS-000031-GPOS-00012
+  ansible.builtin.lineinfile:
+    name: "/etc/tmux.conf"
+    create: true
+    mode: 0644
+    regex: "{{ V230353.regex }}"
+    line: "{{ V230353.line }}"
+  loop_control:
+    loop_var: V230353
+  loop:
+    - { regex: '^(#*|#\s*|\s*)set -g lock-after-time ', line: "set -g lock-after-time 900" }
+
+- name: "RHEL 8 must prevent users from disabling session control mechanisms."
+  tags:
+    - V-230350
+    - low
+    - RHEL-08-020042
+    - SV-230350r627750_rule
+    - C-33019r567796_chk
+    - F-32994r567797_fix
+    - MAC-1_Classified"
+    - MAC-1_Public"
+    - MAC-1_Sensitive"
+    - MAC-2_Classified"
+    - MAC-2_Public"
+    - MAC-2_Sensitive"
+    - MAC-3_Classified"
+    - MAC-3_Public"
+    - MAC-3_Sensitive"
+    - SRG-OS-000028-GPOS-00009
+    - SRG-OS-000030-GPOS-00011
+  ansible.builtin.lineinfile:
+    path: "/etc/shells"
+    regex: '^(.*)tmux'
+    state: absent
+
+- name: "RHEL 8 must ensure session control is automatically started at shell initialization."
+  tags:
+      - V-230349
+      - medium
+      - RHEL-08-020041
+      - SV-230349r833388_rule
+      - C-33018r833309_chk
+      - F-32993r833310_fix
+      - MAC-1_Classified"
+      - MAC-1_Public"
+      - MAC-1_Sensitive"
+      - MAC-2_Classified"
+      - MAC-2_Public"
+      - MAC-2_Sensitive"
+      - MAC-3_Classified"
+      - MAC-3_Public"
+      - MAC-3_Sensitive"
+      - SRG-OS-000028-GPOS-00009
+      - SRG-OS-000030-GPOS-00011
+  ansible.builtin.copy:
+    dest: /etc/profile.d/tmux.sh
+    owner: root
+    group: root
+    mode: '644'
+    force: yes 
+    content: |
+      if [ "$PS1" ]
+          then {
+              parent=$(ps -o ppid= -p $$)
+              name=$(ps -o comm= -p $parent)
+              case "$name" in (sshd|login) exec tmux ;; esac
+          }
+      fi
+

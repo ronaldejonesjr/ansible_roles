@@ -1,0 +1,199 @@
+---
+
+- name: "RHEL 8 must implement NIST FIPS-validated cryptography"
+  tags:
+    - V-230223
+    - high
+    - RHEL-08-010020
+    - SV-230223r792855_rule
+    - C-32892r792854_chk
+    - F-32867r567416_fix
+    - MAC-1_Classified
+    - MAC-1_Public
+    - MAC-1_Sensitive
+    - MAC-2_Classified
+    - MAC-2_Public
+    - MAC-2_Sensitive
+    - MAC-3_Classified
+    - MAC-3_Public
+    - MAC-3_Sensitive
+    - SRG-OS-000033-GPOS-00014
+    - SRG-OS-000125-GPOS-00065
+    - SRG-OS-000396-GPOS-00176
+    - SRG-OS-000423-GPOS-00187
+    - SRG-OS-000478-GPOS-00223
+  block:
+
+    - name: "Install packages if missing"
+      when: "'crypto-policies-scripts' not in ansible_facts.packages"
+      ansible.builtin.package:
+        update_cache: true
+        state: present
+        name:
+          - crypto-policies-scripts
+
+    - name: "Check to see if FIPS mode is enabled"
+      ansible.builtin.command: fips-mode-setup --is-enabled
+      changed_when: false
+      ignore_errors: true
+      register: fips_check
+
+    - name: "Check to see if the system is in FIPS mode"
+      ansible.builtin.set_fact:
+        fips_enabled_check: "{{ lookup('ansible.builtin.file', '/proc/sys/crypto/fips_enabled') }}"
+
+    # There is a known bug with using grub2-editenv list after enabling FIPS
+    # - name: "Check to see if the kernel boot parameter is configured for FIPS mode"
+    #   ansible.builtin.command: grub2-editenv list
+    #   changed_when: false
+    #   ignore_errors: true
+    #   register: boot_check
+    #   # Expects fips=1
+
+    - name: "Check to see if the system is in FIPS mode"
+      ansible.builtin.set_fact:
+        boot_check: "{{ lookup('ansible.builtin.file', '/proc/cmdline') }}"
+
+    - name: "Enable FIPS mode after installation (not strict FIPS compliant)"
+      ansible.builtin.command: fips-mode-setup --enable
+      when: fips_check.rc != 0 or fips_enabled_check == 0 or 'fips=1' not in boot_check
+      notify: "System Reboot via shutdown"
+
+- name: "RHEL 8 must encrypt all stored passwords with a FIPS 140-2 approved cryptographic hashing algorithm."
+  tags:
+    - V-230231
+    - medium
+    - RHEL-08-010110
+    - SV-230231r627750_rule
+    - C-32900r567439_chk
+    - F-32875r567440_fix
+    - MAC-1_Classified
+    - MAC-1_Public
+    - MAC-1_Sensitive
+    - MAC-2_Classified
+    - MAC-2_Public
+    - MAC-2_Sensitive
+    - MAC-3_Classified
+    - MAC-3_Public
+    - MAC-3_Sensitive
+  ansible.builtin.lineinfile:
+    name: "/etc/login.defs"
+    create: yes
+    regex: "{{ V230231.regex }}"
+    line: "{{ V230231.line }}"
+  loop_control:
+    loop_var: V230231
+  loop:
+    - { regex: '^(#*|#\s*|\s*)ENCRYPT_METHOD', line: 'ENCRYPT_METHOD SHA512' }
+
+- name: "RHEL 8 must employ FIPS 140-2 approved cryptographic hashing algorithms for all stored passwords."
+  tags:
+    - V-230232
+    - medium
+    - RHEL-08-010120
+    - SV-230232r627750_rule
+    - C-32901r567442_chk
+    - F-32876r567443_fix
+    - MAC-1_Classified
+    - MAC-1_Public
+    - MAC-1_Sensitive
+    - MAC-2_Classified
+    - MAC-2_Public
+    - MAC-2_Sensitive
+    - MAC-3_Classified
+    - MAC-3_Public
+    - MAC-3_Sensitive
+  block:
+    - name: "Get user password hash"
+      ansible.builtin.getent:
+        database: shadow
+
+    - name: "Lock accounts with insecure password hashes."
+      ansible.builtin.user:
+        name: "{{ V230232 }}"
+        password_lock: true
+      loop_control:
+        loop_var: V230232
+      with_items: "{{ ansible_facts.getent_shadow }}"
+      when:
+        - ansible_facts.getent_shadow[V230232][0] not in ['!','!!', '!*', '*']
+        - ansible_facts.getent_shadow[V230232][0] is not regex('^\$6\$.*')
+
+- name: "The RHEL 8 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-2 validated cryptographic hash algorithms."
+  tags:
+    - V-230251
+    - medium
+    - RHEL-08-010290
+    - SV-230251r743937_rule
+    - C-32920r743935_chk
+    - F-32895r743936_fix
+    - SRG-OS-000250-GPOS-00093
+    - SRG-OS-000393-GPOS-00173
+    - SRG-OS-000394-GPOS-00174
+    - SRG-OS-000125-GPOS-00065
+    - MAC-1_Classified
+    - MAC-1_Public
+    - MAC-1_Sensitive
+    - MAC-2_Classified
+    - MAC-2_Public
+    - MAC-2_Sensitive
+    - MAC-3_Classified
+    - MAC-3_Public
+    - MAC-3_Sensitive
+  ansible.builtin.lineinfile:
+    name: "/etc/crypto-policies/back-ends/opensshserver.config"
+    create: true
+    mode: 0640
+    regex: "{{ V230251.regex }}"
+    line: "{{ V230251.line }}"
+  loop_control:
+    loop_var: V230251
+  loop:
+    - { regex: '^(#*|#\s*|\s*)MACs', line: 'MACs hmac-sha2-512,hmac-sha2-256' }
+  notify: "System Reboot via shutdown"
+
+- name: "The RHEL 8 pam_unix.so module must be configured in the system-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication."
+  tags:
+    - V-244524
+    - medium
+    - RHEL-08-010159
+    - SV-244524r809331_rule
+    - C-47799r809329_chk
+    - F-47756r809330_fix
+    - MAC-1_Classified
+    - MAC-1_Public
+    - MAC-1_Sensitive
+    - MAC-2_Classified
+    - MAC-2_Public
+    - MAC-2_Sensitive
+    - MAC-3_Classified
+    - MAC-3_Public
+    - MAC-3_Sensitive
+  ansible.builtin.replace:
+    path: /etc/pam.d/system-auth
+    regexp:  '^(#*|#\s*|\s*)password(\s*)sufficient(\s*)pam_unix\.so\s(.*)(yescrypt|md5,sha256)(.*)'
+    replace: 'password\2sufficient\3pam_unix.so sha512 \4 \6'
+    backup: true
+
+- name: "The RHEL 8 pam_unix.so module must be configured in the password-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication."
+  tags:
+    - V-230237
+    - medium
+    - RHEL-08-010160
+    - SV-230237r809276_rule
+    - C-32906r809274_chk
+    - F-32881r809275_fix
+    - MAC-1_Classified
+    - MAC-1_Public
+    - MAC-1_Sensitive
+    - MAC-2_Classified
+    - MAC-2_Public
+    - MAC-2_Sensitive
+    - MAC-3_Classified
+    - MAC-3_Public
+    - MAC-3_Sensitive
+  ansible.builtin.replace:
+    path: /etc/pam.d/password-auth
+    regexp:  '^(#*|#\s*|\s*)password(\s*)sufficient(\s*)pam_unix\.so\s(.*)(yescrypt|md5|sha256)(.*)'
+    replace: 'password\2sufficient\3pam_unix.so sha512 \4 \6'
+    backup: true

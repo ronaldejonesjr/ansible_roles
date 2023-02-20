@@ -1,0 +1,12 @@
+---
+
+- name: "Begin system hardening"
+  ansible.builtin.include_tasks: "{{ rolesvar }}"
+  loop_control:
+    loop_var: rolesvar
+  loop:
+    - "{{ ansible_os_family }}/FIPS.yml"
+    - "{{ ansible_os_family }}/auditd.yml"
+    - "{{ ansible_os_family }}/tmux.yml"
+    - "{{ ansible_os_family }}/sshd.yml"
+

@@ -1,0 +1,13 @@
+---
+
+- name: "Restart crond RedHat"
+  ansible.builtin.service:
+    name: crond
+    state: restarted
+    enabled: true
+
+- name: "Restart crond Debian"
+  ansible.builtin.service:
+    name: cron
+    state: restarted
+    enabled: true

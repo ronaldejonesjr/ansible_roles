@@ -1,0 +1,54 @@
+---
+
+################################################################################################################################################################
+# This Security Technical Implementation Guide is published as a tool to improve the security of Department of Defense (DoD) information systems. The
+# requirements are derived from the National Institute of Standards and Technology (NIST) 800-53 and related documents. Comments or proposed revisions to this
+# document should be sent via email to the following address: disa.stig_spt@mail.mil.
+# Based on STIG DTD: 2022-09-07
+# REF: https://www.stigviewer.com/stig/canonical_ubuntu_20.04_lts
+################################################################################################################################################################
+
+- name: "The Ubuntu operating system must implement NIST FIPS-validated cryptography  to protect classified information and for the following: to provision digital signatures, to generate cryptographic hashes, and to protect unclassified information requiring confidentiality and cryptographic protection in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards."
+  ansible.builtin.debug:
+    msg: >
+      Description:
+        Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+        protect data. The operating system must implement cryptographic modules adhering to the higher
+        standards approved by the federal government since this provides assurance they have been tested and
+        validated.
+
+        Satisfies: SRG-OS-000396-GPOS-00176, SRG-OS-000478-GPOS-00223
+      Check:
+        Verify the system is configured to run in FIPS mode with the following command:
+
+        $ grep -i 1 /proc/sys/crypto/fips_enabled
+        1
+
+        If a value of "1" is not returned, this is a finding.
+      Fix:
+        Configure the system to run in FIPS mode. Add "fips=1" to the kernel parameter during the Ubuntu
+        operating systems install.
+
+        Enabling a FIPS mode on a pre-existing system involves a number of modifications to the Ubuntu
+        operating system. Refer to the Ubuntu Server 18.04 FIPS 140-2 security policy document for
+        instructions.
+
+        A subscription to the "Ubuntu Advantage" plan is required in order to obtain the FIPS Kernel
+        cryptographic modules and enable FIPS.
+    tags:
+      - id: "V-238363"
+      - severity: "high"
+      - Version: "UBTU-20-010442"
+      - ruleID: "SV-238363r853438_rule"
+      - checkid: "C-41573r654262_chk"
+      - fixid: "F-41532r654263_fix"
+      - profile: "MAC-1_Classified"
+      - profile: "MAC-1_Public"
+      - profile: "MAC-1_Sensitive"
+      - profile: "MAC-2_Classified"
+      - profile: "MAC-2_Public"
+      - profile: "MAC-2_Sensitive"
+      - profile: "MAC-3_Classified"
+      - profile: "MAC-3_Public"
+      - profile: "MAC-3_Sensitive"
+
