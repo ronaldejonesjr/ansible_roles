@@ -102,13 +102,15 @@
     access_time: preserve
     state: touch
 
-
-  # - name: "Test for line in known_hosts"
-  #   ansible.builtin.shell: grep -c "^github.com" {{ home }}/.ssh/known_hosts || true
-  #   changed_when: false
-  #   register: test_grep_knownhosts
-
-  # - name: "Add github.com host key to known_hosts"
-  #   ansible.builtin.shell: ssh-keyscan -4 -t rsa,dsa,ecdsa,ed25519 github.com > {{ home }}/.ssh/known_hosts &2>1
-  #   register: test_grep
-  #   when: test_grep_knownhosts.stdout == "0"
+##################################################
+# Add user to sudoers.d files.
+##################################################
+- name: "Add /etc/sudoers.d/00-ansible"
+  ansible.builtin.template:
+    src: 00-ansible.j2
+    dest: /etc/sudoers.d/00-ansible
+    owner: root
+    group: root
+    mode: '0440'
+    force: true
+    validate: /usr/sbin/visudo -cf %s
