@@ -131,6 +131,9 @@
     state: present
     disabled: false
 
+- name: "Pull api vars."
+  ansible.builtin.include_tasks: api.yml
+
 - name: "Install cron job for updates (API)"
   ansible.builtin.cron:
     user: "{{ username }}"
