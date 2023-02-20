@@ -1,70 +1,262 @@
 ---
 
-# # - name: "RHEL 8 must use cryptographic mechanisms to protect the integrity of audit tools."
+- name: "The RHEL 8 operating system must use a file integrity tool to verify correct operation of all security functions."
+  tags:
+    - V251710
+    - medium
+    - RHEL-08-010359
+    - SV-251710r854081_rule
+    - C-55147r809352_chk
+    - F-55101r809353_fix
+  when: 
+    - "'aide' not in ansible_facts.packages"
+  ansible.builtin.package:
+    update_cache: true
+    state: present
+    name:
+      - aide
+
+# - name: "The RHEL 8 file integrity tool must be configured to verify extended attributes."
+#   tags:
+#       - V230551
+#       - low
+#       - RHEL-08-040300
+#       - SV-230551r627750_rule
+#       - C-33220r568399_chk
+#       - F-33195r568400_fix
+
+
+
+#   block:
+#     ansible.builtin.debug:
+#       msg: > 
+#        Description:
+#           Extended attributes in file systems are used to contain arbitrary data and file metadata with
+#           security implications.
+
+#           RHEL 8 installation media come with a file integrity tool, Advanced Intrusion Detection Environment
+#           (AIDE).
+#         Check:
+#           Verify the file integrity tool is configured to verify extended attributes.
+
+#           If AIDE is not installed, ask the System Administrator how file integrity checks are performed on
+#           the system.
+
+#           Note: AIDE is highly configurable at install time. This requirement assumes the "aide.conf" file is
+#           under the "/etc" directory.
+
+#           Use the following command to determine if the file is in another location:
+
+#           $ sudo find / -name aide.conf
+
+#           Check the "aide.conf" file to determine if the "xattrs" rule has been added to the rule list being
+#           applied to the files and directories selection lists.
+
+#           An example rule that includes the "xattrs" rule follows:
+
+#           All= p+i+n+u+g+s+m+S+sha512+acl+xattrs+selinux
+#           /bin All # apply the custom rule to the files in bin
+#           /sbin All # apply the same custom rule to the files in sbin
+
+#           If the "xattrs" rule is not being used on all uncommented selection lines in the "/etc/aide.conf"
+#           file, or extended attributes are not being checked by another file integrity tool, this is a
+#           finding.
+#         Fix:
+#           Configure the file integrity tool to check file and directory extended attributes.
+
+#           If AIDE is installed, ensure the "xattrs" rule is present on all uncommented file and directory
+#           selection lists.
+
+# - name: "The RHEL 8 file integrity tool must be configured to verify Access Control Lists (ACLs)."
+#   tags:
+#       - V230552
+#       - low
+#       - RHEL-08-040310
+#       - SV-230552r627750_rule
+#       - C-33221r568402_chk
+#       - F-33196r568403_fix
+#   block:
+#     ansible.builtin.debug:
+#       msg: > 
+#        Description:
+#           ACLs can provide permissions beyond those permitted through the file mode and must be verified by
+#           file integrity tools.
+
+#           RHEL 8 installation media come with a file integrity tool, Advanced Intrusion Detection Environment
+#           (AIDE).
+#         Check:
+#           Verify the file integrity tool is configured to verify ACLs.
+
+#           Note: AIDE is highly configurable at install time. This requirement assumes the "aide.conf" file is
+#           under the "/etc" directory.
+
+#           If AIDE is not installed, ask the System Administrator how file integrity checks are performed on
+#           the system.
+
+#           Use the following command to determine if the file is in a location other than
+#           "/etc/aide/aide.conf":
+
+#           $ sudo find / -name aide.conf
+
+#           Check the "aide.conf" file to determine if the "acl" rule has been added to the rule list being
+#           applied to the files and directories selection lists with the following command:
+
+#           $ sudo egrep "[+]?acl" /etc/aide.conf
+
+#           VarFile = OwnerMode+n+l+X+acl
+
+#           If the "acl" rule is not being used on all selection lines in the "/etc/aide.conf" file, is
+#           commented out, or ACLs are not being checked by another file integrity tool, this is a finding.
+#         Fix:
+#           Configure the file integrity tool to check file and directory ACLs.
+
+#           If AIDE is installed, ensure the "acl" rule is present on all file and directory selection lists.
+
+# - name: "RHEL 8 must use cryptographic mechanisms to protect the integrity of audit tools."
+#   tags:
+#       - V230475
+#       - medium
+#       - RHEL-08-030650
+#       - SV-230475r833333_rule
+#       - C-33144r833332_chk
+#       - F-33119r568172_fix
+#   block:
+#     ansible.builtin.debug:
+#       msg: >
+#        Description:
+#           Protecting the integrity of the tools used for auditing purposes is a critical step toward ensuring
+#           the integrity of audit information. Audit information includes all information (e.g., audit records,
+#           audit settings, and audit reports) needed to successfully audit information system activity.
+
+#           Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to
+#           successfully view and manipulate audit information system activity and records. Audit tools include
+#           custom queries and report generators.
+
+#           It is not uncommon for attackers to replace the audit tools or inject code into the existing tools
+#           with the purpose of providing the capability to hide or erase system activity from the audit logs.
+
+#           To address this risk, audit tools must be cryptographically signed to provide the capability to
+#           identify when the audit tools have been modified, manipulated, or replaced. An example is a checksum
+#           hash of the file or files.
+#         Check:
+#           Verify that Advanced Intrusion Detection Environment (AIDE) is properly configured to use
+#           cryptographic mechanisms to protect the integrity of audit tools.
+
+#           If AIDE is not installed, ask the System Administrator how file integrity checks are performed on
+#           the system.
+
+#           Check the selection lines to ensure AIDE is configured to add/check with the following command:
+
+#           $ sudo egrep '(\/usr\/sbin\/(audit|au|rsys))' /etc/aide.conf
+
+#           /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
+
+#           If any of the audit tools listed above do not have an appropriate selection line, ask the system
+#           administrator to indicate what cryptographic mechanisms are being used to protect the integrity of
+#           the audit tools. If there is no evidence of integrity protection, this is a finding.
+#         Fix:
+#           Add or update the following lines to "/etc/aide.conf", to protect the integrity of the audit tools.
+
+#           # Audit Tools
+#           /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512
+#           /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
+
+# # - name: "The RHEL 8 file integrity tool must notify the system administrator when changes to the baseline configuration or anomalies in the operation of any security functions are discovered within an organizationally defined frequency."
 # #   tags:
-# #       - V-230475
+# #       - V230263
 # #       - medium
-# #       - RHEL-08-030650
-# #       - SV-230475r833333_rule
-# #       - C-33144r833332_chk
-# #       - F-33119r568172_fix
-# #       - MAC-1_Classified
-# #       - MAC-1_Public
-# #       - MAC-1_Sensitive
-# #       - MAC-2_Classified
-# #       - MAC-2_Public
-# #       - MAC-2_Sensitive
-# #       - MAC-3_Classified
-# #       - MAC-3_Public
-# #       - MAC-3_Sensitive
+# #       - RHEL-08-010360
+# #       - SV-230263r858725_rule
+# #       - C-32932r858724_chk
+# #       - F-32907r567536_fix
+# #       - SRG-OS-000363-GPOS-00150
+# #       - SRG-OS-000446-GPOS-00200
+# #       - SRG-OS-000447-GPOS-00201
 # #   block:
 # #     ansible.builtin.debug:
-# #       msg: >
+# #       msg: > 
 # #        Description:
-# #           Protecting the integrity of the tools used for auditing purposes is a critical step toward ensuring
-# #           the integrity of audit information. Audit information includes all information (e.g., audit records,
-# #           audit settings, and audit reports) needed to successfully audit information system activity.
+# #           Unauthorized changes to the baseline configuration could make the system vulnerable to various
+# #           attacks or allow unauthorized access to the operating system. Changes to operating system
+# #           configurations can have unintended side effects, some of which may be relevant to security.
 
-# #           Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to
-# #           successfully view and manipulate audit information system activity and records. Audit tools include
-# #           custom queries and report generators.
+# #           Detecting such changes and providing an automated response can help avoid unintended, negative
+# #           consequences that could ultimately affect the security state of the operating system. The operating
+# #           system's Information Management Officer (IMO)/Information System Security Officer (ISSO) and System
+# #           Administrators (SAs) must be notified via email and/or monitoring system trap when there is an
+# #           unauthorized modification of a configuration item.
 
-# #           It is not uncommon for attackers to replace the audit tools or inject code into the existing tools
-# #           with the purpose of providing the capability to hide or erase system activity from the audit logs.
+# #           Notifications provided by information systems include messages to local computer consoles, and/or
+# #           hardware indications, such as lights.
 
-# #           To address this risk, audit tools must be cryptographically signed to provide the capability to
-# #           identify when the audit tools have been modified, manipulated, or replaced. An example is a checksum
-# #           hash of the file or files.
+# #           This capability must take into account operational requirements for availability for selecting an
+# #           appropriate response. The organization may choose to shut down or restart the information system
+# #           upon security function anomaly detection.
+
+# #           RHEL 8 comes with many optional software packages. A file integrity tool called Advanced Intrusion
+# #           Detection Environment (AIDE) is one of those optional packages. This requirement assumes the use of
+# #           AIDE; however, a different tool may be used if the requirements are met. Note that AIDE does not
+# #           have a configuration that will send a notification, so a cron job is recommended that uses the mail
+# #           application on the system to email the results of the file integrity check.
+
+# #           Satisfies: 
 # #         Check:
-# #           Verify that Advanced Intrusion Detection Environment (AIDE) is properly configured to use
-# #           cryptographic mechanisms to protect the integrity of audit tools.
+# #           Verify the operating system routinely checks the baseline configuration for unauthorized changes and
+# #           notifies the system administrator when anomalies in the operation of any security functions are
+# #           discovered.
+
+# #           Check to see if AIDE is installed on the system with the following command:
+
+# #           $ sudo yum list installed aide
 
 # #           If AIDE is not installed, ask the System Administrator how file integrity checks are performed on
 # #           the system.
 
-# #           Check the selection lines to ensure AIDE is configured to add/check with the following command:
+# #           Check that RHEL 8 routinely executes a file integrity scan for changes to the system baseline. The
+# #           command used in the example will use a daily occurrence.
 
-# #           $ sudo egrep '(\/usr\/sbin\/(audit|au|rsys))' /etc/aide.conf
+# #           Check the cron directories for scripts controlling the execution and notification of results of the
+# #           file integrity application. For example, if AIDE is installed on the system, use the following
+# #           commands:
 
-# #           /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
+# #           $ sudo ls -al /etc/cron.* | grep aide
 
-# #           If any of the audit tools listed above do not have an appropriate selection line, ask the system
-# #           administrator to indicate what cryptographic mechanisms are being used to protect the integrity of
-# #           the audit tools. If there is no evidence of integrity protection, this is a finding.
+# #           -rwxr-xr-x 1 root root 29 Nov 22 2015 aide
+
+# #           $ sudo grep aide /etc/crontab /var/spool/cron/root
+
+# #           /etc/crontab: 30 04 * * * root /usr/sbin/aide
+# #           /var/spool/cron/root: 30 04 * * * root /usr/sbin/aide
+
+# #           $ sudo more /etc/cron.daily/aide
+
+# #           !/bin/bash
+# #           /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil
+
+# #           If the file integrity application does not exist, or a script file controlling the execution of the
+# #           file integrity application does not exist, or the file integrity application does not notify
+# #           designated personnel of changes, this is a finding.
 # #         Fix:
-# #           Add or update the following lines to "/etc/aide.conf", to protect the integrity of the audit tools.
+# #           Configure the file integrity tool to run automatically on the system at least weekly and to notify
+# #           designated personnel if baseline configurations are changed in an unauthorized manner. The AIDE tool
+# #           can be configured to email designated personnel with the use of the cron system.
 
-# #           # Audit Tools
-# #           /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512
-# #           /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
+# #           The following example output is generic. It will set cron to run AIDE daily and to send email at the
+# #           completion of the analysis.
+
+# #           $ sudo more /etc/cron.daily/aide
+
+# #           !/bin/bash
+
+# #           /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil

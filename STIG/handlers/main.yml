@@ -18,7 +18,7 @@
   ansible.builtin.systemd:
     daemon_reexec: true
 
-- name: dconf update
+- name: "dconf update"
   command: dconf update
 
 - name: "Restart sshd.service"
@@ -36,5 +36,11 @@
 - name: "Restart auditd.service"
   ansible.builtin.service:
     name: auditd.service
+    state: restarted
+    enabled: true
+
+- name: "Restart rsyslog.service"
+  ansible.builtin.systemd:
+    name: rsyslog.service
     state: restarted
     enabled: true

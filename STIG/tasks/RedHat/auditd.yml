@@ -5,7 +5,7 @@
 
     - name: "The RHEL 8 audit package must be installed."
       tags:
-        - V-230411
+        - V230411
         - medium
         - RHEL-08-030180
         - SV-230411r744000_rule
@@ -35,24 +35,28 @@
         - SRG-OS-000365-GPOS-00152
         - SRG-OS-000392-GPOS-00172
         - SRG-OS-000475-GPOS-00220
-        - V-230477
+        - V230477
         - medium
         - RHEL-08-030670
         - SV-230477r627750_rule
         - C-33146r568177_chk
         - F-33121r568178_fix
-        - V-230478
+        - V230478
         - medium
         - RHEL-08-030680
         - SV-230478r744011_rule
         - C-33147r744009_chk
         - F-33122r744010_fix
-        - V-230228
+        - V230228
         - medium
         - RHEL-08-010070
         - SV-230228r627750_rule
         - C-32897r567430_chk
         - F-32872r567431_fix
+      when: 
+        - "'audit' not in ansible_facts.packages"
+        - "'rsyslog' not in ansible_facts.packages"
+        - "'rsyslog-gnutls' not in ansible_facts.packages"
       ansible.builtin.package:
         update_cache: true
         state: present
@@ -63,7 +67,7 @@
 
     - name: "RHEL 8 audit records must contain information to establish what type of events occurred, the source of events, where events occurred, and the outcome of events."
       tags:
-        - V-244542
+        - V244542
         - medium
         - RHEL-08-030181
         - SV-244542r818838_rule
@@ -95,7 +99,6 @@
         - SRG-OS-000475-GPOS-00220
       ansible.builtin.service:
         name: auditd.service
-        # state: restarted
         enabled: true
 
     - name: >
@@ -103,13 +106,13 @@
         (or individuals or roles appointed by the ISSM) to select which auditable events are to be audited.
         RHEL 8 audit logs must be owned by root to prevent unauthorized read access.
       tags:
-        - V-230471
+        - V230471
         - medium
         - RHEL-08-030610
         - SV-230471r627750_rule
         - C-33140r568159_chk
         - F-33115r568160_fix
-        - V-230397
+        - V230397
         - medium
         - RHEL-08-030080
         - V-230397r627750_rule
@@ -142,7 +145,7 @@
         RHEL 8 audit log directory must be group-owned by root to prevent unauthorized read access.
         RHEL 8 audit log directory must have a mode of 0700 or less permissive to prevent unauthorized read access."
       tags:
-        - V-230396
+        - V230396
         - medium
         - RHEL-08-030070
         - V-230396r627750_rule
@@ -152,7 +155,7 @@
         - SRG-OS-000058-GPOS-00028
         - SRG-OS-000059-GPOS-00029
         - SRG-OS-000206-GPOS-00084
-        - V-230399
+        - V230399
         - RHEL-08-030100
         - V-230399r627750_rule
         - C-33068r567943_chk
@@ -160,7 +163,7 @@
         - SRG-OS-000057-GPOS-00027
         - SRG-OS-000058-GPOS-00028
         - SRG-OS-000059-GPOS-00029
-        - V-230400
+        - V230400
         - RHEL-08-030110
         - V-230400r627750_rule
         - C-33069r567946_chk
@@ -191,14 +194,14 @@
         RHEL 8 audit tools must be group-owned by root.
         RHEL 8 audit tools must be owned by root."
       tags:
-        - V-230472
+        - V230472
         - medium
         - RHEL-08-030620
         - SV-230472r627750_rule
         - C-33141r568162_chk
         - F-33116r568163_fix
-        - V-230473
-        - V-230474
+        - V230473
+        - V230474
         - RHEL-08-030630
         - RHEL-08-030640
         - SV-230473r744008_rule
@@ -236,7 +239,7 @@
         The RHEL 8 Information System Security Officer (ISSO) and System Administrator (SA) (at a minimum) must have mail aliases
         to be notified of an audit processing failure.
       tags:
-        - V-230389
+        - V230389
         - medium
         - RHEL-08-030030
         - SV-230389r627750_rule
@@ -258,7 +261,7 @@
 
     - name: "RHEL 8 must allocate an audit_backlog_limit of sufficient size to capture processes that start prior to the audit daemon."
       tags:
-        - V-230469
+        - V230469
         - low
         - RHEL-08-030602
         - SV-230469r854039_rule
@@ -291,7 +294,7 @@
 
     - name: "RHEL 8 must enable auditing of processes that start prior to the audit daemon."
       tags:
-        - V-230468
+        - V230468
         - low
         - RHEL-08-030601
         - SV-230468r792904_rule
@@ -332,7 +335,7 @@
 
     - name: "The RHEL 8 System must take appropriate action when an audit processing failure occurs."
       tags:
-        - V-230390
+        - V230390
         - medium
         - RHEL-08-030040
         - V-230390r627750_rule
@@ -344,7 +347,7 @@
         mode: 0640
         regex: "{{ V230390.regex }}"
         line: "{{ V230390.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230390
       loop:
@@ -354,7 +357,7 @@
 
     - name: "The RHEL 8 audit system must take appropriate action when the audit storage volume is full."
       tags:
-        - V-230392
+        - V230392
         - medium
         - RHEL-08-030060
         - V-230392r627750_rule
@@ -366,7 +369,7 @@
         mode: 0640
         regex: "{{ V230392.regex }}"
         line: "{{ V230392.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230392
       loop:
@@ -376,7 +379,7 @@
 
     - name: "The RHEL 8 audit system must audit local events."
       tags:
-        - V-230393
+        - V230393
         - medium
         - RHEL-08-030061
         - V-230393r627750_rule
@@ -388,7 +391,7 @@
         mode: 0640
         regex: "{{ V230393.regex }}"
         line: "{{ V230393.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230393
       loop:
@@ -396,7 +399,7 @@
 
     - name: "RHEL 8 must label all off-loaded audit logs before sending them to the central log server."
       tags:
-        - V-230394
+        - V230394
         - medium
         - RHEL-08-030062
         - V-230394r854038_rule
@@ -408,7 +411,7 @@
         mode: 0640
         regex: "{{ V230394.regex }}"
         line: "{{ V230394.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230394
       loop:
@@ -416,7 +419,7 @@
 
     - name: "RHEL 8 must resolve audit information before writing to disk."
       tags:
-        - V-230395
+        - V230395
         - low
         - RHEL-08-030063
         - V-230395r627750_rule
@@ -428,7 +431,7 @@
         mode: 0640
         regex: "{{ V230395.regex }}"
         line: "{{ V230395.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230395
       loop:
@@ -436,7 +439,7 @@
 
     - name: "RHEL 8 audit logs must be group-owned by root to prevent unauthorized read access."
       tags:
-        - V-230398
+        - V230398
         - medium
         - RHEL-08-030090
         - V-230398r627750_rule
@@ -451,7 +454,7 @@
         mode: 0640
         regex: "{{ V230396.regex }}"
         line: "{{ V230396.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230396
       loop:
@@ -459,7 +462,7 @@
 
     - name: "The RHEL 8 System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) must be alerted of an audit processing failure event."
       tags:
-        - V-230388
+        - V230388
         - medium
         - RHEL-08-030020
         - SV-230388r627750_rule
@@ -471,7 +474,7 @@
         mode: 0640
         regex: "{{ V230396.regex }}"
         line: "{{ V230396.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230396
       loop:
@@ -479,7 +482,7 @@
 
     - name: "RHEL 8 must notify the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) when allocated audit record storage volume 75 percent utilization."
       tags:
-        - V-244543
+        - V244543
         - medium
         - RHEL-08-030731
         - SV-244543r854072_rule
@@ -491,7 +494,7 @@
         mode: 0640
         regex: "{{ V244543.regex }}"
         line: "{{ V244543.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V244543
       loop:
@@ -499,7 +502,7 @@
 
     - name: "RHEL 8 must take appropriate action when the internal event queue is full."
       tags:
-        - V-230480
+        - V230480
         - medium
         - RHEL-08-030700
         - SV-230480r854042_rule
@@ -513,7 +516,7 @@
         mode: 0640
         regex: "{{ V244543.regex }}"
         line: "{{ V244543.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V244543
       loop:
@@ -522,7 +525,7 @@
 
     - name: "RHEL 8 must take action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity."
       tags:
-        - V-230483
+        - V230483
         - medium
         - RHEL-08-030730
         - SV-230483r854045_rule
@@ -534,7 +537,7 @@
         mode: 0640
         regex: "{{ V244543.regex }}"
         line: "{{ V244543.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V244543
       loop:
@@ -545,7 +548,7 @@
 
     - name: "The RHEL 8 audit system must be configured to audit the execution of privileged functions and prevent all software from executing at higher privilege levels than users executing the software."
       tags:
-        - V-230386
+        - V230386
         - medium
         - RHEL-08-030000
         - SV-230386r854037_rule
@@ -559,7 +562,7 @@
         mode: 0640
         regex: "{{ V230386.regex }}"
         line: "{{ V230386.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230386
       loop:
@@ -570,7 +573,7 @@
 
     - name: "The RHEL 8 audit system must be configured to audit any usage of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls."
       tags:
-        - V-230413
+        - V230413
         - medium
         - RHEL-08-030200
         - SV-230413r810463_rule
@@ -593,7 +596,7 @@
         mode: 0640
         regex: "{{ V230413.regex }}"
         line: "{{ V230413.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230413
       loop:
@@ -604,7 +607,7 @@
 
     - name: "RHEL 8 audit system must protect logon UIDs from unauthorized change."
       tags:
-        - V-230403
+        - V230403
         - medium
         - RHEL-08-030122
         - SV-230403r627750_rule
@@ -619,7 +622,7 @@
         mode: 0640
         regex: "{{ V230403.regex }}"
         line: "{{ V230403.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230403
       loop:
@@ -627,7 +630,7 @@
 
     - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/shadow."
       tags:
-        - V-230404
+        - V230404
         - medium
         - RHEL-08-030130
         - SV-230404r627750_rule
@@ -656,7 +659,7 @@
         mode: 0640
         regex: "{{ V230404.regex }}"
         line: "{{ V230404.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230404
       loop:
@@ -664,7 +667,7 @@
 
     - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/security/opasswd."
       tags:
-        - V-230405
+        - V230405
         - medium
         - RHEL-08-030140
         - SV-230405r627750_rule
@@ -692,7 +695,7 @@
         mode: 0640
         regex: "{{ V230405.regex }}"
         line: "{{ V230405.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230405
       loop:
@@ -700,7 +703,7 @@
 
     - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd."
       tags:
-        - V-230406
+        - V230406
         - medium
         - RHEL-08-030150
         - SV-230406r627750_rule
@@ -729,7 +732,7 @@
         mode: 0640
         regex: "{{ V230406.regex }}"
         line: "{{ V230406.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230406
       loop:
@@ -737,7 +740,7 @@
 
     - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow."
       tags:
-        - V-230407
+        - V230407
         - medium
         - RHEL-08-030160
         - SV-230407r627750_rule
@@ -766,7 +769,7 @@
         mode: 0640
         regex: "{{ V230407.regex }}"
         line: "{{ V230407.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230407
       loop:
@@ -774,7 +777,7 @@
 
     - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group."
       tags:
-        - V-230408
+        - V230408
         - medium
         - RHEL-08-030170
         - SV-230408r627750_rule
@@ -804,7 +807,7 @@
         mode: 0640
         regex: "{{ V230408.regex }}"
         line: "{{ V230408.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230408
       loop:
@@ -812,7 +815,7 @@
 
     - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers."
       tags:
-        - V-230409
+        - V230409
         - medium
         - RHEL-08-030171
         - SV-230409r627750_rule
@@ -840,7 +843,7 @@
         mode: 0640
         regex: "{{ V230409.regex }}"
         line: "{{ V230409.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230409
       loop:
@@ -848,7 +851,7 @@
 
     - name: "RHEL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/sudoers.d/."
       tags:
-        - V-230410
+        - V230410
         - medium
         - RHEL-08-030172
         - SV-230410r627750_rule
@@ -876,7 +879,7 @@
         mode: 0640
         regex: "{{ V230410.regex }}"
         line: "{{ V230410.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230410
       loop:
@@ -884,7 +887,7 @@
 
     - name: "Successful/unsuccessful uses of the su command in RHEL 8 must generate an audit record."
       tags:
-        - V-230412
+        - V230412
         - medium
         - RHEL-08-030190
         - SV-230412r627750_rule
@@ -904,7 +907,7 @@
         mode: 0640
         regex: "{{ V230412.regex }}"
         line: "{{ V230412.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230412
       loop:
@@ -912,7 +915,7 @@
 
     - name: "Successful/unsuccessful uses of the chage command in RHEL 8 must generate an audit record."
       tags:
-        - V-230418
+        - V230418
         - medium
         - RHEL-08-030250
         - SV-230418r627750_rule
@@ -931,7 +934,7 @@
         mode: 0640
         regex: "{{ V230418.regex }}"
         line: "{{ V230418.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230418
       loop:
@@ -939,7 +942,7 @@
 
     - name: "Successful/unsuccessful uses of the chcon command in RHEL 8 must generate an audit record."
       tags:
-        - V-230419
+        - V230419
         - medium
         - RHEL-08-030260
         - SV-230419r627750_rule
@@ -958,7 +961,7 @@
         mode: 0640
         regex: "{{ V230419.regex }}"
         line: "{{ V230419.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230419
       loop:
@@ -966,7 +969,7 @@
 
     - name: "Successful/unsuccessful uses of the ssh-agent in RHEL 8 must generate an audit record."
       tags:
-        - V-230421
+        - V230421
         - medium
         - RHEL-08-030280
         - SV-230421r627750_rule
@@ -985,7 +988,7 @@
         mode: 0640
         regex: "{{ V230421.regex }}"
         line: "{{ V230421.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230421
       loop:
@@ -993,7 +996,7 @@
 
     - name: "Successful/unsuccessful uses of the passwd command in RHEL 8 must generate an audit record."
       tags:
-        - V-230422
+        - V230422
         - medium
         - RHEL-08-030290
         - SV-230422r627750_rule
@@ -1012,7 +1015,7 @@
         mode: 0640
         regex: "{{ V230422.regex }}"
         line: "{{ V230422.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230422
       loop:
@@ -1020,7 +1023,7 @@
 
     - name: "Successful/unsuccessful uses of the mount command in RHEL 8 must generate an audit record."
       tags:
-        - V-230423
+        - V230423
         - medium
         - RHEL-08-030300
         - SV-230423r627750_rule
@@ -1039,7 +1042,7 @@
         mode: 0640
         regex: "{{ V230423.regex }}"
         line: "{{ V230423.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230423
       loop:
@@ -1047,7 +1050,7 @@
 
     - name: "Successful/unsuccessful uses of the umount command in RHEL 8 must generate an audit record."
       tags:
-        - V-230424
+        - V230424
         - medium
         - RHEL-08-030301
         - SV-230424r627750_rule
@@ -1059,7 +1062,7 @@
         mode: 0640
         regex: "{{ V230424.regex }}"
         line: "{{ V230424.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230424
       loop:
@@ -1067,7 +1070,7 @@
 
     - name: "Successful/unsuccessful uses of the mount syscall in RHEL 8 must generate an audit record."
       tags:
-        - V-230425
+        - V230425
         - medium
         - RHEL-08-030302
         - SV-230425r627750_rule
@@ -1086,7 +1089,7 @@
         mode: 0640
         regex: "{{ V230425.regex }}"
         line: "{{ V230425.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230425
       loop:
@@ -1095,7 +1098,7 @@
 
     - name: "Successful/unsuccessful uses of the unix_update in RHEL 8 must generate an audit record."
       tags:
-        - V-230426
+        - V230426
         - medium
         - RHEL-08-030310
         - SV-230426r627750_rule
@@ -1109,7 +1112,7 @@
         mode: 0640
         regex: "{{ V230426.regex }}"
         line: "{{ V230426.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230426
       loop:
@@ -1117,7 +1120,7 @@
 
     - name: "Successful/unsuccessful uses of postdrop in RHEL 8 must generate an audit record."
       tags:
-        - V-230427
+        - V230427
         - medium
         - RHEL-08-030311
         - SV-230427r627750_rule
@@ -1136,7 +1139,7 @@
         mode: 0640
         regex: "{{ V230427.regex }}"
         line: "{{ V230427.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230427
       loop:
@@ -1144,7 +1147,7 @@
 
     - name: "Successful/unsuccessful uses of postqueue in RHEL 8 must generate an audit record."
       tags:
-        - V-230428
+        - V230428
         - medium
         - RHEL-08-030312
         - SV-230428r627750_rule
@@ -1163,7 +1166,7 @@
         mode: 0640
         regex: "{{ V230428.regex }}"
         line: "{{ V230428.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230428
       loop:
@@ -1171,7 +1174,7 @@
 
     - name: "Successful/unsuccessful uses of semanage in RHEL 8 must generate an audit record."
       tags:
-        - V-230429
+        - V230429
         - medium
         - RHEL-08-030313
         - SV-230429r627750_rule
@@ -1190,7 +1193,7 @@
         mode: 0640
         regex: "{{ V230429.regex }}"
         line: "{{ V230429.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230429
       loop:
@@ -1198,7 +1201,7 @@
 
     - name: "Successful/unsuccessful uses of setfiles in RHEL 8 must generate an audit record."
       tags:
-        - V-230430
+        - V230430
         - medium
         - RHEL-08-030314
         - SV-230430r627750_rule
@@ -1210,7 +1213,7 @@
         mode: 0640
         regex: "{{ V230430.regex }}"
         line: "{{ V230430.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230430
       loop:
@@ -1218,7 +1221,7 @@
 
     - name: "Successful/unsuccessful uses of userhelper in RHEL 8 must generate an audit record."
       tags:
-        - V-230431
+        - V230431
         - medium
         - RHEL-08-030315
         - SV-230431r627750_rule
@@ -1237,7 +1240,7 @@
         mode: 0640
         regex: "{{ V230431.regex }}"
         line: "{{ V230431.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230431
       loop:
@@ -1245,7 +1248,7 @@
 
     - name: "Successful/unsuccessful uses of setsebool in RHEL 8 must generate an audit record."
       tags:
-        - V-230432
+        - V230432
         - medium
         - RHEL-08-030316
         - SV-230432r627750_rule
@@ -1264,7 +1267,7 @@
         mode: 0640
         regex: "{{ V230432.regex }}"
         line: "{{ V230432.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230432
       loop:
@@ -1272,7 +1275,7 @@
 
     - name: "Successful/unsuccessful uses of unix_chkpwd in RHEL 8 must generate an audit record."
       tags:
-        - V-230433
+        - V230433
         - medium
         - RHEL-08-030317
         - SV-230433r627750_rule
@@ -1291,7 +1294,7 @@
         mode: 0640
         regex: "{{ V230433.regex }}"
         line: "{{ V230433.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230433
       loop:
@@ -1299,7 +1302,7 @@
 
     - name: "Successful/unsuccessful uses of the ssh-keysign in RHEL 8 must generate an audit record."
       tags:
-        - V-230434
+        - V230434
         - medium
         - RHEL-08-030320
         - SV-230434r744002_rule
@@ -1318,7 +1321,7 @@
         mode: 0640
         regex: "{{ V230434.regex }}"
         line: "{{ V230434.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230434
       loop:
@@ -1326,7 +1329,7 @@
 
     - name: "Successful/unsuccessful uses of the setfacl command in RHEL 8 must generate an audit record."
       tags:
-        - V-230435
+        - V230435
         - medium
         - RHEL-08-030330
         - SV-230435r627750_rule
@@ -1345,7 +1348,7 @@
         mode: 0640
         regex: "{{ V230435.regex }}"
         line: "{{ V230435.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230435
       loop:
@@ -1353,7 +1356,7 @@
 
     - name: "Successful/unsuccessful uses of the pam_timestamp_check command in RHEL 8 must generate an audit record."
       tags:
-        - V-230436
+        - V230436
         - medium
         - RHEL-08-030340
         - SV-230436r627750_rule
@@ -1372,7 +1375,7 @@
         mode: 0640
         regex: "{{ V230436.regex }}"
         line: "{{ V230436.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230436
       loop:
@@ -1380,7 +1383,7 @@
 
     - name: "Successful/unsuccessful uses of the newgrp command in RHEL 8 must generate an audit record."
       tags:
-        - V-230437
+        - V230437
         - medium
         - RHEL-08-030350
         - SV-230437r627750_rule
@@ -1400,7 +1403,7 @@
         mode: 0640
         regex: "{{ V230437.regex }}"
         line: "{{ V230437.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230437
       loop:
@@ -1408,7 +1411,7 @@
 
     - name: "Successful/unsuccessful uses of the init_module and finit_module system calls in RHEL 8 must generate an audit record."
       tags:
-        - V-230438
+        - V230438
         - medium
         - RHEL-08-030360
         - SV-230438r810464_rule
@@ -1426,7 +1429,7 @@
         mode: 0640
         regex: "{{ V230438.regex }}"
         line: "{{ V230438.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230438
       loop:
@@ -1435,7 +1438,7 @@
 
     - name: "Successful/unsuccessful uses of the rename, unlink, rmdir, renameat, and unlinkat system calls in RHEL 8 must generate an audit record."
       tags:
-        - V-230439
+        - V230439
         - medium
         - RHEL-08-030361
         - SV-230439r810465_rule
@@ -1453,7 +1456,7 @@
         mode: 0640
         regex: "{{ V230439.regex }}"
         line: "{{ V230439.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230439
       loop:
@@ -1462,7 +1465,7 @@
 
     - name: "Successful/unsuccessful uses of the gpasswd command in RHEL 8 must generate an audit record."
       tags:
-        - V-230444
+        - V230444
         - medium
         - RHEL-08-030370
         - SV-230444r627750_rule
@@ -1481,7 +1484,7 @@
         mode: 0640
         regex: "{{ V230444.regex }}"
         line: "{{ V230444.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230444
       loop:
@@ -1489,7 +1492,7 @@
 
     - name: "Successful/unsuccessful uses of the delete_module command in RHEL 8 must generate an audit record."
       tags:
-        - V-230446
+        - V230446
         - medium
         - RHEL-08-030390
         - SV-230446r627750_rule
@@ -1508,7 +1511,7 @@
         mode: 0640
         regex: "{{ V230446.regex }}"
         line: "{{ V230446.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230446
       loop:
@@ -1517,7 +1520,7 @@
 
     - name: "Successful/unsuccessful uses of the crontab command in RHEL 8 must generate an audit record."
       tags:
-        - V-230447
+        - V230447
         - medium
         - RHEL-08-030400
         - SV-230447r627750_rule
@@ -1536,7 +1539,7 @@
         mode: 0640
         regex: "{{ V230447.regex }}"
         line: "{{ V230447.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230447
       loop:
@@ -1544,7 +1547,7 @@
 
     - name: "Successful/unsuccessful uses of the chsh command in RHEL 8 must generate an audit record."
       tags:
-        - V-230448
+        - V230448
         - medium
         - RHEL-08-030410
         - SV-230448r627750_rule
@@ -1563,7 +1566,7 @@
         mode: 0640
         regex: "{{ V230448.regex }}"
         line: "{{ V230448.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230448
       loop:
@@ -1571,7 +1574,7 @@
 
     - name: "Successful/unsuccessful uses of the truncate, ftruncate, creat, open, openat, and open_by_handle_at system calls in RHEL 8 must generate an audit record."
       tags:
-        - V-230449
+        - V230449
         - medium
         - RHEL-08-030420
         - SV-230449r810455_rule
@@ -1590,7 +1593,7 @@
         mode: 0640
         regex: "{{ V230449.regex }}"
         line: "{{ V230449.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230449
       loop:
@@ -1601,7 +1604,7 @@
 
     - name: "Successful/unsuccessful uses of the chown, fchown, fchownat, and lchown system calls in RHEL 8 must generate an audit record."
       tags:
-        - V-230455
+        - V230455
         - medium
         - RHEL-08-030480
         - SV-230455r810459_rule
@@ -1620,7 +1623,7 @@
         mode: 0640
         regex: "{{ V230455.regex }}"
         line: "{{ V230455.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230455
       loop:
@@ -1629,7 +1632,7 @@
 
     - name: "Successful/unsuccessful uses of the chmod, fchmod, and fchmodat system calls in RHEL 8 must generate an audit record."
       tags:
-        - V-230456
+        - V230456
         - medium
         - RHEL-08-030490
         - SV-230456r810462_rule
@@ -1649,7 +1652,7 @@
         mode: 0640
         regex: "{{ V230456.regex }}"
         line: "{{ V230456.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230456
       loop:
@@ -1658,7 +1661,7 @@
 
     - name: "Successful/unsuccessful uses of the sudo command in RHEL 8 must generate an audit record."
       tags:
-        - V-230462
+        - V230462
         - medium
         - RHEL-08-030550
         - SV-230462r627750_rule
@@ -1677,7 +1680,7 @@
         mode: 0640
         regex: "{{ V230462.regex }}"
         line: "{{ V230462.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230462
       loop:
@@ -1685,7 +1688,7 @@
 
     - name: "Successful/unsuccessful uses of the usermod command in RHEL 8 must generate an audit record."
       tags:
-        - V-230463
+        - V230463
         - medium
         - RHEL-08-030560
         - SV-230463r627750_rule
@@ -1704,7 +1707,7 @@
         mode: 0640
         regex: "{{ V230463.regex }}"
         line: "{{ V230463.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230463
       loop:
@@ -1712,7 +1715,7 @@
 
     - name: "Successful/unsuccessful uses of the chacl command in RHEL 8 must generate an audit record."
       tags:
-        - V-230464
+        - V230464
         - medium
         - RHEL-08-030570
         - SV-230464r627750_rule
@@ -1732,7 +1735,7 @@
         mode: 0640
         regex: "{{ V230464.regex }}"
         line: "{{ V230464.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230464
       loop:
@@ -1740,7 +1743,7 @@
 
     - name: "Successful/unsuccessful uses of the kmod command in RHEL 8 must generate an audit record."
       tags:
-        - V-230465
+        - V230465
         - medium
         - RHEL-08-030580
         - SV-230465r627750_rule
@@ -1761,7 +1764,7 @@
         mode: 0640
         regex: "{{ V230465.regex }}"
         line: "{{ V230465.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230465
       loop:
@@ -1769,7 +1772,7 @@
 
     - name: "Successful/unsuccessful modifications to the faillock log file in RHEL 8 must generate an audit record."
       tags:
-        - V-230466
+        - V230466
         - medium
         - RHEL-08-030590
         - SV-230466r627750_rule
@@ -1789,7 +1792,7 @@
         mode: 0640
         regex: "{{ V230466.regex }}"
         line: "{{ V230466.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230466
       loop:
@@ -1797,7 +1800,7 @@
 
     - name: "Successful/unsuccessful modifications to the lastlog file in RHEL 8 must generate an audit record."
       tags:
-        - V-230467
+        - V230467
         - medium
         - RHEL-08-030600
         - SV-230467r627750_rule
@@ -1817,7 +1820,7 @@
         mode: 0640
         regex: "{{ V230467.regex }}"
         line: "{{ V230467.line }}"
-      # notify: Restart auditd.service
+      notify: Restart auditd.service
       loop_control:
         loop_var: V230467
       loop:
@@ -1827,7 +1830,7 @@
       #   Note: Once set, the system must be rebooted for auditing to be changed.  It is recommended to add
       #   this option as the last step in securing the system.
       tags:
-        - V-230402
+        - V230402
         - medium
         - RHEL-08-030121
         - SV-230402r627750_rule
@@ -1844,3 +1847,142 @@
         loop_var: V230402
       loop:
         - { regex: '^(#*|#\s*|\s*)-e 2', line: "-e 2" }
+
+- name: "# Setup rsyslog"
+  block:
+    - name: "The rsyslog service must be running in RHEL 8."
+      tags:
+          - V230298
+          - medium
+          - RHEL-08-010561
+          - SV-230298r627750_rule
+          - C-32967r567640_chk
+          - F-32942r567641_fix
+      ansible.builtin.service:
+        name: rsyslog.service
+        enabled: true
+
+    - name: "Cron logging must be implemented in RHEL 8."
+      tags:
+          - V230387
+          - medium
+          - RHEL-08-030010
+          - SV-230387r743996_rule
+          - C-33056r743994_chk
+          - F-33031r743995_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/rsyslog.d/cron.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230387.regex }}"
+        line: "{{ V230387.line }}"
+      notify: Restart rsyslog.service
+      loop_control:
+        loop_var: V230387
+      loop:
+        - { regex: '^(#*|#\s*|\s*)cron', line: "cron.* /var/log/cron" }
+
+    - name: "All RHEL 8 remote access methods must be monitored."
+      tags:
+          - V230228
+          - medium
+          - RHEL-08-010070
+          - SV-230228r627750_rule
+          - C-32897r567430_chk
+          - F-32872r567431_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/rsyslog.d/cron.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230228.regex }}"
+        line: "{{ V230228.line }}"
+      notify: Restart rsyslog.service
+      loop_control:
+        loop_var: V230228
+      loop:
+        - { regex: '^(#*|#\s*|\s*)(auth.*|authpriv.*|daemon.*)\s*\/var\/log\/secure', line: "auth.*;authpriv.*;daemon.* /var/log/secure" }
+
+    - name: "All RHEL 8 remote access methods must be monitored."
+      tags:
+          - V230228
+          - medium
+          - RHEL-08-010070
+          - SV-230228r627750_rule
+          - C-32897r567430_chk
+          - F-32872r567431_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/rsyslog.d/cron.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230228.regex }}"
+        line: "{{ V230228.line }}"
+      notify: Restart rsyslog.service
+      loop_control:
+        loop_var: V230228
+      loop:
+        - { regex: '^(#*|#\s*|\s*)(auth.*|authpriv.*|daemon.*)\s*\/var\/log\/secure', line: "auth.*;authpriv.*;daemon.* /var/log/secure" }
+
+    - name: "RHEL 8 must encrypt the transfer of audit records off-loaded onto a different system or media from the system being audited."
+      tags:
+          - V230481
+          - medium
+          - RHEL-08-030710
+          - SV-230481r854043_rule
+          - C-33150r818839_chk
+          - F-33125r568190_fix
+          - SRG-OS-000342-GPOS-00133
+          - SRG-OS-000479-GPOS-00224
+      ansible.builtin.lineinfile:
+        name: "/etc/rsyslog.d/off-loaded.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230481.regex }}"
+        line: "{{ V230481.line }}"
+      notify: Restart rsyslog.service
+      loop_control:
+        loop_var: V230481
+      loop:
+        - { regex: '^(#*|#\s*|\s*)$DefaultNetstreamDriver', line: "$DefaultNetstreamDriver gtls" }
+        - { regex: '^(#*|#\s*|\s*)$ActionSendStreamDriverMode', line: "$ActionSendStreamDriverMode 1" }
+
+    - name: "RHEL 8 must authenticate the remote logging server for off-loading audit logs."
+      tags:
+          - V230482
+          - medium
+          - RHEL-08-030720
+          - SV-230482r854044_rule
+          - C-33151r568192_chk
+          - F-33126r568193_fix
+      ansible.builtin.lineinfile:
+        name: "/etc/rsyslog.d/off-loaded.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230482.regex }}"
+        line: "{{ V230482.line }}"
+      notify: Restart rsyslog.service
+      loop_control:
+        loop_var: V230482
+      loop:
+        - { regex: '^(#*|#\s*|\s*)$ActionSendStreamDriverAuthMode', line: "$ActionSendStreamDriverAuthMode x509/name" }
+
+    - name: "The RHEL 8 audit records must be off-loaded onto a different system or storage media from the system being audited."
+      tags:
+          - V230479
+          - medium
+          - RHEL-08-030690
+          - SV-230479r854041_rule
+          - C-33148r568183_chk
+          - F-33123r568184_fix
+          - SRG-OS-000342-GPOS-00133
+          - SRG-OS-000479-GPOS-00224
+      ansible.builtin.lineinfile:
+        name: "/etc/rsyslog.d/off-loaded.conf"
+        create: true
+        mode: 0640
+        regex: "{{ V230479.regex }}"
+        line: "{{ V230479.line }}"
+      notify: Restart rsyslog.service
+      loop_control:
+        loop_var: V230479
+      loop:
+        - { regex: '^(#*|#\s*|\s*)\*\.\* @@\[remoteloggingserver]:\[port]', line: "*.* @@[remoteloggingserver]:[port]" }

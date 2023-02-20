@@ -9,7 +9,6 @@
 
 ##################################################
 # Check / install python3 and ansible.
-# This may be needed if this was started from a central server.
 ##################################################
 - name: "Install required packages"
   when: ansible_os_family == "RedHat"
@@ -33,117 +32,115 @@
       - git
       - cron
 
-- name: "Install python libraries"
-  ansible.builtin.pip:
-    name:
-      - ansible
-      - passlib
-    extra_args: --user
-  become_user: "{{ username }}"
-
 ##################################################
-# Add user to sudoers.d files.
+# Ansible PUll
 ##################################################
-- name: "Add /etc/sudoers.d/00-ansible"
-  ansible.builtin.template:
-    src: 00-ansible.j2
-    dest: /etc/sudoers.d/00-ansible
-    owner: root
-    group: root
-    mode: '0440'
-    force: true
-    validate: /usr/sbin/visudo -cf %s
+- name: "Setup Ansible-Pull"
+  tags: Ansible-Pull
+  block:
 
-##################################################
-# Configure Ansible services
-##################################################
-- name: "Write ansible.logrotate"
-  ansible.builtin.template:
-    src: logrotate.j2
-    dest: "{{ home }}/bin/lib/ansible.logrotate"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0600'
-    force: false
+  - name: "Install python libraries"
+    ansible.builtin.pip:
+      name:
+        - ansible
+        - passlib
+      extra_args: --user
+    become_user: "{{ username }}"
 
-- name: "Write ansible.cfg"
-  ansible.builtin.template:
-    # src: ansible.cfg
-    src: ansible.conf.j2
-    dest: "{{ home }}/ansible.cfg"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0600'
-    force: true
+  ##################################################
+  # Configure Ansible services
+  ##################################################
+  - name: "Write ansible.logrotate"
+    ansible.builtin.template:
+      src: logrotate.j2
+      dest: "{{ home }}/bin/lib/ansible.logrotate"
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      mode: '0600'
+      force: false
 
-- name: "Write host.yml"
-  ansible.builtin.template:
-    src: hosts.yml.j2
-    dest: "{{ home }}/hosts.yml"
-    owner: "{{ username }}"
-    group: "{{ username }}"
-    mode: '0600'
-    force: true
+  - name: "Write ansible.cfg"
+    ansible.builtin.template:
+      # src: ansible.cfg
+      src: ansible.conf.j2
+      dest: "{{ home }}/ansible.cfg"
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      mode: '0600'
+      force: true
 
-- name: "Add ansibile to cron.allow"
-  ansible.builtin.lineinfile:
-    dest: /etc/cron.allow
-    create: true
-    owner: root
-    group: root
-    mode: '0644'
-    regex: '^{{ username }}'
-    line: "{{ username }}"
-  notify: "Restart crond {{ ansible_os_family }}"
+  - name: "Write host.yml"
+    ansible.builtin.template:
+      src: hosts.yml.j2
+      dest: "{{ home }}/hosts.yml"
+      owner: "{{ username }}"
+      group: "{{ username }}"
+      mode: '0600'
+      force: false
 
-##################################################
-# Setup cron jobs to automate.
-##################################################
+  - name: "Add ansibile to cron.allow"
+    ansible.builtin.lineinfile:
+      dest: /etc/cron.allow
+      create: true
+      owner: root
+      group: root
+      mode: '0644'
+      regex: '^{{ username }}'
+      line: "{{ username }}"
+    notify: "Restart crond {{ ansible_os_family }}"
 
-- name: "Install cron job for ansible.logrotate"
-  ansible.builtin.cron:
-    user: "{{ username }}"
-    name: "Rotate ansible logs"
-    special_time: daily
-    job: >
-      /usr/sbin/logrotate
-      --state /opt/ansible/logs/logrotate.state
-      --log /opt/ansible/logs/ansible_logrotate.log
-      /opt/ansible/bin/lib/ansible.logrotate >> /opt/ansible/logs/ansible_logrotate.log 2>&1
-    state: present
-    disabled: false
+  ##################################################
+  # Setup cron jobs to automate.
+  ##################################################
 
-- name: "Install cron job for ansible-pull (API)"
-  ansible.builtin.cron:
-    user: "{{ username }}"
-    name: "Ansible Provisioning (API)"
-    minute: "*/30"
-    job: >
-      /opt/ansible/.local/bin/ansible-pull
-      --only-if-changed
-      --checkout master
-      --inventory $(hostname),
-      --clean
-      --diff
-      --vault-password-file=/opt/ansible/.vault_pass
-      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible.git
-      local.yml >> /opt/ansible/logs/cron.log 2>&1
-    state: present
-    disabled: false
+  - name: "Install cron job for ansible.logrotate"
+    ansible.builtin.cron:
+      user: "{{ username }}"
+      name: "Rotate ansible logs"
+      special_time: daily
+      job: >
+        /usr/sbin/logrotate
+        --state /opt/ansible/logs/logrotate.state
+        --log /opt/ansible/logs/ansible_logrotate.log
+        /opt/ansible/bin/lib/ansible.logrotate >> /opt/ansible/logs/ansible_logrotate.log 2>&1
+      state: present
+      disabled: false
 
-- name: "Install cron job for updates (API)"
-  ansible.builtin.cron:
-    user: "{{ username }}"
-    name: "System Updates (API)"
-    hour: "*/6"
-    minute: 00
-    job: >
-      /opt/ansible/.local/bin/ansible-pull
-      --checkout master
-      --inventory $(hostname),
-      --clean
-      --diff
-      --url https://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:x-oauth-basic@github.com/patriotmercenary/ansible.git
-      updates.yml >> /opt/ansible/logs/update_cron.log 2>&1
-    state: present
-    disabled: false
+  - name: "Include vars in user.yml"
+    ansible.builtin.include_vars:
+      file: api.yml
+
+  - name: "Install cron job for ansible-pull (API)"
+    ansible.builtin.cron:
+      user: "{{ username }}"
+      name: "Ansible Provisioning (API)"
+      minute: "*/30"
+      job: >
+        /opt/ansible/.local/bin/ansible-pull
+        --only-if-changed
+        --checkout main
+        --inventory $(hostname),
+        --clean
+        --diff
+        --vault-password-file=/opt/ansible/.vault_pass
+        --url https://{{ token | trim }}@github.com/patriotmercenary/ansible_lab.git
+        local.yml >> /opt/ansible/logs/cron.log 2>&1
+      state: present
+      disabled: false
+
+  - name: "Install cron job for updates (API)"
+    ansible.builtin.cron:
+      user: "{{ username }}"
+      name: "System Updates (API)"
+      hour: "*/6"
+      minute: 00
+      job: >
+        /opt/ansible/.local/bin/ansible-pull
+        --checkout main
+        --inventory $(hostname),
+        --clean
+        --diff
+        --url https://{{ token | trim }}@github.com/patriotmercenary/ansible_lab.git
+        updates.yml >> /opt/ansible/logs/update_cron.log 2>&1
+      state: present
+      disabled: false

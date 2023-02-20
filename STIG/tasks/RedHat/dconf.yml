@@ -1,0 +1,226 @@
+--- 
+
+- name: "Include vars in user.yml"
+  ansible.builtin.include_vars:
+    file: dconf.yml
+
+- name: "RHEL 8 must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon."
+  tags:
+      - V230226
+      - medium
+      - RHEL-08-010050
+      - SV-230226r743916_rule
+      - C-32895r743914_chk
+      - F-32870r743915_fix
+      - SRG-OS-000023-GPOS-00006
+      - SRG-OS-000228-GPOS-00088
+  community.general.ini_file:
+    path: /etc/dconf/db/local.d/01-banner-message
+    section: org/gnome/login-screen
+    option: banner-message-text
+    value: "{{ personal_banner_gui }}"
+    mode: '0644'
+    state: present
+    exclusive: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must display a banner before granting local or remote access to the system via a graphical user logon."
+  tags:
+      - V244519
+      - medium
+      - RHEL-08-010049
+      - SV-244519r743806_rule
+      - C-47794r743804_chk
+      - F-47751r743805_fix
+  community.general.ini_file:
+    path: /etc/dconf/db/local.d/01-banner-message
+    section: org/gnome/login-screen
+    option: banner-message-enable
+    value: 'true'
+    mode: '0644'
+    state: present
+    exclusive: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must disable the user list at logon for graphical user interfaces."
+  tags:
+      - V244536
+      - medium
+      - RHEL-08-020032
+      - SV-244536r743857_rule
+      - C-47811r743855_chk
+      - F-47768r743856_fix
+  community.general.ini_file:
+    path: /etc/dconf/db/local.d/02-login-screen
+    section: org/gnome/login-screen
+    option: disable-user-list
+    value: 'true'
+    mode: '0644'
+    state: present
+    exclusive: true
+  notify: "dconf update"
+
+- name: "The x86 Ctrl-Alt-Delete key sequence in RHEL 8 must be disabled if a graphical user interface is installed."
+  tags:
+      - V230530
+      - high
+      - RHEL-08-040171
+      - SV-230530r646883_rule
+      - C-33199r646882_chk
+      - F-33174r568337_fix
+  community.general.ini_file:
+    path: /etc/dconf/db/local.d/00-disable-CAD
+    section: org/gnome/settings-daemon/plugins/media-keys
+    option: logout
+    value: "''"
+    mode: '0644'
+    state: present
+    exclusive: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for graphical user sessions."
+  tags:
+      - V230347
+      - medium
+      - RHEL-08-020030
+      - SV-230347r627750_rule
+      - C-33016r567787_chk
+      - F-32991r567788_fix
+      - SRG-OS-000028-GPOS-00009
+      - SRG-OS-000030-GPOS-00011
+  community.general.ini_file:
+    path: /etc/dconf/db/local.d/00-screensaver
+    section: org/gnome/desktop/screensaver
+    option: lock-enabled
+    value: 'true'
+    mode: '0644'
+    state: present
+    exclusive: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must automatically lock graphical user sessions after 15 minutes of inactivity."
+  tags:
+      - V230352
+      - medium
+      - RHEL-08-020060
+      - SV-230352r646876_rule
+      - C-33021r646875_chk
+      - F-32996r567803_fix
+      - SRG-OS-000029-GPOS-00010
+      - SRG-OS-000031-GPOS-00012
+  community.general.ini_file:
+    path: /etc/dconf/db/local.d/00-screensaver
+    section: org/gnome/desktop/session
+    option: idle-delay
+    value: "'uint32 900'"
+    mode: '0644'
+    state: present
+    exclusive: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must initiate a session lock for graphical user interfaces when the screensaver is activated."
+  tags:
+      - V244535
+      - medium
+      - RHEL-08-020031
+      - SV-244535r743854_rule
+      - C-47810r743852_chk
+      - F-47767r743853_fix
+      - SRG-OS-000029-GPOS-00010
+      - SRG-OS-000031-GPOS-00012
+      - SRG-OS-000480-GPOS-00227
+  community.general.ini_file:
+    path: /etc/dconf/db/local.d/00-screensaver
+    section: org/gnome/desktop/screensaver
+    option: lock-delay
+    value: "'uint32 5'"
+    mode: '0644'
+    state: present
+    exclusive: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must prevent a user from overriding the session lock-delay setting for the graphical user interface."
+  tags:
+      - V230354
+      - medium
+      - RHEL-08-020080
+      - SV-230354r743990_rule
+      - C-33023r743988_chk
+      - F-32998r743989_fix
+      - SRG-OS-000029-GPOS-00010
+      - SRG-OS-000031-GPOS-00012
+      - SRG-OS-000480-GPOS-00227
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/local.d/locks/session
+    search_string: /org/gnome/desktop/screensaver/lock-delay
+    line: /org/gnome/desktop/screensaver/lock-delay
+    mode: '0644'
+    state: present
+    create: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must prevent a user from overriding the session idle-delay setting for the graphical user interface."
+  tags:
+      - V244538
+      - medium
+      - RHEL-08-020081
+      - SV-244538r743863_rule
+      - C-47813r743861_chk
+      - F-47770r743862_fix
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/local.d/locks/session
+    search_string: /org/gnome/desktop/session/idle-delay
+    line: /org/gnome/desktop/session/idle-delay
+    mode: '0644'
+    state: present
+    create: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must prevent a user from overriding the screensaver lock-enabled setting for the graphical user interface."
+  tags:
+      - V244539
+      - medium
+      - RHEL-08-020082
+      - SV-244539r743866_rule
+      - C-47814r743864_chk
+      - F-47771r743865_fix
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/local.d/locks/session
+    search_string: /org/gnome/desktop/screensaver/lock-enabled
+    line: /org/gnome/desktop/screensaver/lock-enabled
+    mode: '0644'
+    state: present
+    create: true
+  notify: "dconf update"
+
+- name: "RHEL 8 must be able to initiate directly a session lock for all connection types using smartcard when the smartcard is removed."
+  tags:
+      - V230351
+      - medium
+      - RHEL-08-020050
+      - SV-230351r792899_rule
+      - C-33020r792897_chk
+      - F-32995r792898_fix
+      - SRG-OS-000028-GPOS-00009
+      - SRG-OS-000030-GPOS-00011
+  block: 
+    - name: "Update local DB"
+      community.general.ini_file:
+        path: /etc/dconf/db/local.d/00-security-settings
+        section: org/gnome/settings-daemon/peripherals/smartcard
+        option: removal-action
+        value: "'lock-screen'"
+        mode: '0644'
+        state: present
+        exclusive: true
+      notify: "dconf update"
+
+    - name: "Prevent users from overriding smartcard behavor"
+      ansible.builtin.lineinfile:
+        path: /etc/dconf/db/distro.d/locks/10-authconfig-locks 
+        search_string: /org/gnome/settings-daemon/peripherals/smartcard
+        line: /org/gnome/settings-daemon/peripherals/smartcard
+        mode: '0644'
+        state: present
+        create: true
+      notify: "dconf update"

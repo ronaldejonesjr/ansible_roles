@@ -15,7 +15,7 @@
     comment: "{{ comment }}"
     system: "{{ system }}"
     uid: "{{ uid }}"
-    password: "{{ '%s' |format(password) | password_hash('sha512', 'r4nd0m533d') }}"
+    password: "{{ '%s' | format(password) | password_hash('sha512', 'r4nd0m533d') }}"
     create_home: true
     home: "{{ home }}"
     shell: "{{ shell }}"
@@ -32,7 +32,7 @@
     shell: "{{ shell }}"
     password: "{{ '%s' | format(password) | password_hash('sha512', 'r4nd0m533d') }}"
 
-- name: "Update {{ home }} permissions"
+- name: "Update permissions on {{ home }}"
   changed_when: false
   ansible.builtin.file:
     path: "{{ home }}"
@@ -84,7 +84,7 @@
 
 - name: "Create ssh config"
   ansible.builtin.template:
-    src:  sshconfig.j2
+    src: sshconfig.j2
     dest: "{{ home }}/.ssh/config"
     owner: "{{ username }}"
     group: "{{ username }}"
@@ -101,3 +101,16 @@
     modification_time: preserve
     access_time: preserve
     state: touch
+
+##################################################
+# Add user to sudoers.d files.
+##################################################
+- name: "Add /etc/sudoers.d/00-ansible"
+  ansible.builtin.template:
+    src: 00-ansible.j2
+    dest: /etc/sudoers.d/00-ansible
+    owner: root
+    group: root
+    mode: '0440'
+    force: true
+    validate: /usr/sbin/visudo -cf %s

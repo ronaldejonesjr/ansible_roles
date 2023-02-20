@@ -1,0 +1,147 @@
+---
+
+- name: "Include vars of user.yml"
+  ansible.builtin.include_vars:
+    dir: vars/users/
+
+
+# # - name: Add non-service users
+# #   include_tasks: accounts.yml
+# #   loop:
+# #     "{{ user_list }}"
+
+#
+# - name: "Process each user"
+#   ansible.builtin.debug: 
+#     msg: "{{ item }}"
+#   with_items: "{{ users }}"
+
+- ansible.builtin.set_fact:
+    users: "{{ user|default([]) + [ lookup('file', item)|from_yaml ] }}"
+  loop: "{{ lookup('fileglob', 'vars/users/*.yml', wantlist=True) }}"
+- ansible.builtin.debug:
+    msg: "{{ item }}"
+  loop: "{{ user }}"
+
+# - name: "Get user info : {{ item.username }}"
+#   ansible.builtin.getent:
+#     database: passwd
+#     key: "{{ item.username }}"
+#   changed_when: false
+#   register: passwd_result
+#   ignore_errors: true
+#   with_items: "{{ users }}"
+
+# - name: "Add the {{ username }}"
+#   when: passwd_result is failed
+#   ansible.builtin.user:
+#     name: "{{ username }}"
+#     comment: "{{ comment }}"
+#     system: "{{ system }}"
+#     password: "{{ '%s'|format(password) | password_hash('sha512','') }}"
+#     create_home: true
+#     home: "{{ home }}"
+#     shell: "{{ shell }}"
+#     generate_ssh_key: true
+#     ssh_key_bits: 4096
+#     ssh_key_comment: "{{ username }}@{{ ansible_facts['nodename'] }}"
+#     state: present
+
+# - name: "Update the {{ username }}"
+#   when: passwd_result is not false
+#   ansible.builtin.user:
+#     name: "{{ username }}"
+#     comment: "{{ comment }}"
+#     shell: "{{ shell }}"
+#     password: "{{ '%s'|format(password) | password_hash('sha512','') }}"
+
+# - name: "{{ username }} : Create directories in /home/{{ username }}"
+#   file:
+#     path: "{{ directories }}"
+#     state: directory
+#     owner: "{{ username }}"
+#     group: "{{ username }}"
+#     mode: 0700
+#   loop_control:
+#     loop_var: directories
+#   with_items:
+#     - /home/{{ username }}/.ssh
+
+# - name: "{{ username }} : Check if .ssh keys exists"
+#   stat:
+#     path: /home/{{ username }}/.ssh/id_rsa.pub
+#   register: rsa_data
+
+# - name: generate SSH key "{{ssh_key_filename}}"
+#   openssh_keypair:
+#     path: "/home/{{ username }}/.ssh/id_rsa"
+#     owner: "{{ username }}"
+#     group: "{{ username }}"
+#     mode: 0400
+#     type: rsa
+#     size: 4096
+#     comment: "{{ username }}@{{ ansible_facts['nodename'] }}"
+#     state: present
+#     force: no
+
+# - name: "{{ username }} : Check if .authorized_keys exists"
+#   stat:
+#     path: /home/{{ username }}/.ssh/authorized_keys
+#   register: file_data
+# #  when: passwd_result is failed
+
+# - name: "{{ username }} : Copy new key to .authorized_keys"
+#   copy:
+#     remote_src: true
+#     src: /home/{{ username }}/.ssh/id_rsa.pub
+#     dest: /home/{{ username }}/.ssh/authorized_keys
+#     owner: "{{ username }}"
+#     group: "{{ username }}"
+#     mode: '0400'
+#     force: no
+#   become: true
+#   become_user: "{{ username }}"
+#   become_method: sudo
+# #  when: passwd_result is failed and not file_data.stat.exists
+#   when: not file_data.stat.exists
+
+# - name: "{{ username }} : Check if .ssh/.config exists"
+#   stat:
+#     path: /home/{{ username }}/.ssh/config
+#   register: file_data
+#   # when: passwd_result is failed
+
+# - name: "{{ username }} : Create ssh config"
+#   copy:
+#     dest: /home/{{ username }}/.ssh/config
+#     owner: "{{ username }}"
+#     group: "{{ username }}"
+#     mode: '0600'
+#     force: no
+#     content: |
+#       ## default for all ##
+#       Host *
+#         ForwardAgent no
+#         ForwardX11 no
+#         ForwardX11Trusted yes
+#         User "{{ username }}"
+#         Port 22
+#         Protocol 2
+#         IdentityFile /home/{{ username }}/.ssh/id_rsa
+#         ServerAliveInterval 60
+#         ServerAliveCountMax 30
+#   become: true
+#   become_user: "{{ username }}"
+#   become_method: sudo
+#  # when: passwd_result is failed and not file_data.stat.exists
+
+# - name: "{{ username }} : Test for authorized key"
+#   shell: grep -c "{{ ssh_key }}" /home/{{ username }}/.ssh/authorized_keys || true
+#   register: key_grep
+#   # when: ssh_key | bool
+
+# - name: "{{ username }} : Add authorized key"
+#   lineinfile:
+#     dest: /home/{{ username }}/.ssh/authorized_keys
+#     line: "{{ ssh_key }}"
+#   when:  key_grep.stdout == "0"
