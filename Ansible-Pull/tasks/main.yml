@@ -121,6 +121,7 @@
         --checkout main
         --inventory $(hostname),
         --clean
+        --purge
         --diff
         --vault-password-file=/opt/ansible/.vault_pass
         --url {{ ansible_url | trim }}
@@ -139,6 +140,7 @@
         --checkout main
         --inventory $(hostname),
         --clean
+        --purge
         --diff
         --url {{ ansible_url | trim }}
         updates.yml >> /opt/ansible/logs/update_cron.log 2>&1

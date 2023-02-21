@@ -15,7 +15,7 @@
     comment: "{{ comment }}"
     system: "{{ system }}"
     uid: "{{ uid }}"
-    password: "{{ '%s' | format(password) | password_hash('sha512', 'r4nd0m533d') }}"
+    password: "{{ '%s' | format(password) | password_hash('sha512', seed | trim) }}"
     create_home: true
     home: "{{ home }}"
     shell: "{{ shell }}"
@@ -30,7 +30,7 @@
     name: "{{ username }}"
     comment: "{{ comment }}"
     shell: "{{ shell }}"
-    password: "{{ '%s' | format(password) | password_hash('sha512', 'r4nd0m533d') }}"
+    password: "{{ '%s' | format(password) | password_hash('sha512', seed | trim) }}"
 
 - name: "Update permissions on {{ home }}"
   changed_when: false
