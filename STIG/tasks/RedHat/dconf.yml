@@ -1,4 +1,4 @@
---- 
+---
 
 - name: "Include vars in user.yml"
   ansible.builtin.include_vars:
@@ -18,7 +18,7 @@
     path: /etc/dconf/db/local.d/01-banner-message
     section: org/gnome/login-screen
     option: banner-message-text
-    value: "{{ personal_banner_gui }}"
+    value: "{{ personal_banner_gui | trim }}"
     mode: '0644'
     state: present
     exclusive: true
@@ -203,7 +203,7 @@
       - F-32995r792898_fix
       - SRG-OS-000028-GPOS-00009
       - SRG-OS-000030-GPOS-00011
-  block: 
+  block:
     - name: "Update local DB"
       community.general.ini_file:
         path: /etc/dconf/db/local.d/00-security-settings
@@ -217,7 +217,7 @@
 
     - name: "Prevent users from overriding smartcard behavor"
       ansible.builtin.lineinfile:
-        path: /etc/dconf/db/distro.d/locks/10-authconfig-locks 
+        path: /etc/dconf/db/distro.d/locks/10-authconfig-locks
         search_string: /org/gnome/settings-daemon/peripherals/smartcard
         line: /org/gnome/settings-daemon/peripherals/smartcard
         mode: '0644'
