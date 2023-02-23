@@ -31,26 +31,3 @@ ssh_banner: |
   #   confidential. See User Agreement for details.                              #
   ################################################################################
 
-
-UofR_ssh_banner: |
-  ********************************************************************************
-  *                                                                              *
-  *  I UNDERSTAND AND CONSENT TO THE FOLLOWING:                                  *
-  *                                                                              *
-  *  I am accessing a University of Rochester information system for             *
-  *  authorized use only. Unauthorized use of this information system is         *
-  *  prohibited and subject to criminal, civil, security, or administrative      *
-  *  proceedings and/or penalties.                                               *
-  *                                                                              *
-  *  USE OF THIS INFORMATION SYSTEM INDICATES CONSENT TO THE INTERCEPTION,       *
-  *  MONITORING, RECORDING, AND COPYING OF ALL ACTIVITIES AND DATA.              *
-  *                                                                              *
-  *  The University of Rochester routinely monitors communications occurring     *
-  *  on this information system. I have no reasonable expectation of privacy     *
-  *  regarding any communications or data transiting or stored on this           *
-  *  information system. At any time, the University may intercept, search,      *
-  *  or seize any communication or data transiting or stored on this             *
-  *  information system.                                                         *
-  *                                                                              *
-  ********************************************************************************
-
