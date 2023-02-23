@@ -1,0 +1,4 @@
+!/bin/bash
+set -euo pipefail
+
+/usr/sbin/aide --check | /bin/mail -s "$(/var/bin/hostname) - Daily aide integrity check run" {{ admin_email | trim }}
