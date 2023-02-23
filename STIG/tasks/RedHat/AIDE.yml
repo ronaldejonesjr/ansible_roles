@@ -55,7 +55,7 @@
       - SRG-OS-000447-GPOS-00201
     ansible.builtin.template:
       src: aide.cron.j2
-      dest: "etc/cron.daily/aide"
+      dest: "/etc/cron.daily/aide"
       owner: root
       group: root
       mode: 0600
