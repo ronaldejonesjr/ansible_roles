@@ -29,7 +29,6 @@
       - SRG-OS-000425-GPOS-00189
       - SRG-OS-000426-GPOS-00190
       - V230526
-      - medium
       - RHEL-08-040160
       - SV-230526r854067_rule
       - C-33195r744030_chk
@@ -133,7 +132,8 @@
     loop_control:
       loop_var: V230253
     loop:
-      - { regex: '^(#*|#\s*|\s*)SSH_USE_STRONG_RNG=', line: "SSH_USE_STRONG_RNG=32" }
+      - regex: '^(#*|#\s*|\s*)SSH_USE_STRONG_RNG='
+        line: "SSH_USE_STRONG_RNG=32"
 
   - name: "The RHEL 8 operating system must implement DoD-approved encryption to protect the confidentiality of SSH server connections."
     tags:
@@ -166,7 +166,8 @@
     loop_control:
       loop_var: V230252
     loop:
-      - { regex: '^(#*|#\s*|\s*)-oCiphers=', line: "-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr" }
+      - regex: '^(#*|#\s*|\s*)-oCiphers='
+        line: "-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr"
 
   - name: "The RHEL 8 SSH daemon must be configured to use system-wide crypto policies."
     tags:
@@ -195,12 +196,13 @@
     loop_control:
       loop_var: V244526
     loop:
-      - { regex: '^(#*|#\s*|\s*)CRYPTO_POLICY=(.*)', line: '# CRYPTO_POLICY=\2' }
+      - regex: '^(#*|#\s*|\s*)CRYPTO_POLICY=(.*)'
+        line: '# CRYPTO_POLICY=\2'
 
 - name: "# Configure sshd.comf"
-  block: 
+  block:
 
-  - name: > 
+  - name: >
       "RHEL 8 must display the Standard Mandatory DoD Notice and Consent Banner
       before granting local or remote access to the system via a ssh logon."
     tags:
@@ -244,7 +246,8 @@
         loop_control:
           loop_var: V230225
         loop:
-          - { regex: '^(#*|#\s*|\s*)(b|B)anner(\s*)', line: "banner /etc/issue" }
+          - regex: '^(#*|#\s*|\s*)(b|B)anner(\s*)'
+        line: "banner /etc/issue"
 
   - name: "The RHEL 8 SSH daemon must perform strict mode checking of home directory configuration files."
     tags:
@@ -273,7 +276,8 @@
     loop_control:
       loop_var: V230288
     loop:
-      - { regex: '^(#*|#\s*|\s*)StrictModes ', line: "StrictModes yes" }
+      - regex: '^(#*|#\s*|\s*)StrictModes '
+        line: "StrictModes yes"
 
   - name: "The RHEL 8 SSH daemon must not allow compression or must only allow compression after successful authentication."
     tags:
@@ -302,7 +306,8 @@
     loop_control:
       loop_var: V230289
     loop:
-      - { regex: '^(#*|#\s*|\s*)Compression  ', line: "Compression delayed" }
+      - regex: '^(#*|#\s*|\s*)Compression  '
+        line: "Compression delayed"
 
   - name: "The RHEL 8 SSH daemon must not allow authentication using known host’s authentication."
     tags:
@@ -331,7 +336,8 @@
     loop_control:
       loop_var: V230290
     loop:
-      - { regex: '^(#*|#\s*|\s*)IgnoreUserKnownHosts  ', line: "IgnoreUserKnownHosts yes" }
+      - regex: '^(#*|#\s*|\s*)IgnoreUserKnownHosts  '
+        line: "IgnoreUserKnownHosts yes"
 
   - name: "The RHEL 8 SSH daemon must not allow Kerberos authentication, except to fulfill documented and validated mission requirements."
     tags:
@@ -360,7 +366,8 @@
     loop_control:
       loop_var: V230291
     loop:
-      - { regex: '^(#*|#\s*|\s*)KerberosAuthentication  ', line: "KerberosAuthentication no" }
+      - regex: '^(#*|#\s*|\s*)KerberosAuthentication  '
+        line: "KerberosAuthentication no"
 
   - name: "RHEL 8 must not permit direct logons to the root account using remote access via SSH."
     tags:
@@ -389,7 +396,8 @@
     loop_control:
       loop_var: V230296
     loop:
-      - { regex: '^(#*|#\s*|\s*)PermitRootLogin  ', line: "PermitRootLogin no" }
+      - regex: '^(#*|#\s*|\s*)PermitRootLogin  '
+        line: "PermitRootLogin no"
 
   - name: "RHEL 8 must not allow users to override SSH environment variables."
     tags:
@@ -418,7 +426,8 @@
     loop_control:
       loop_var: V230296
     loop:
-      - { regex: '^(#*|#\s*|\s*)PermitUserEnvironment  ', line: "PermitUserEnvironment no" }
+      - regex: '^(#*|#\s*|\s*)PermitUserEnvironment  '
+        line: "PermitUserEnvironment no"
 
   - name: "RHEL 8 must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements."
     tags:
@@ -450,7 +459,8 @@
     loop_control:
       loop_var: V230244
     loop:
-      - { regex: '^(#*|#\s*|\s*)ClientAliveCountMax  ', line: "ClientAliveCountMax 1" }
+      - regex: '^(#*|#\s*|\s*)ClientAliveCountMax  '
+        line: "ClientAliveCountMax 1"
 
   - name: "The RHEL 8 SSH daemon must not allow GSSAPI authentication, except to fulfill documented and validated mission requirements."
     tags:
@@ -479,7 +489,8 @@
     loop_control:
       loop_var: V244528
     loop:
-      - { regex: '^(#*|#\s*|\s*)GSSAPIAuthentication  ', line: "GSSAPIAuthentication no" }
+      - regex: '^(#*|#\s*|\s*)GSSAPIAuthentication  '
+        line: "GSSAPIAuthentication no"
 
   - name: "The RHEL 8 SSH daemon must be configured with a timeout interval."
     tags:
@@ -511,7 +522,8 @@
     loop_control:
       loop_var: V244525
     loop:
-      - { regex: '^(#*|#\s*|\s*)ClientAliveInterval  ', line: "ClientAliveInterval 600" }
+      - regex: '^(#*|#\s*|\s*)ClientAliveInterval  '
+        line: "ClientAliveInterval 600"
 
   - name: "The RHEL 8 SSH daemon must prevent remote hosts from connecting to the proxy display."
     tags:
@@ -540,7 +552,8 @@
     loop_control:
       loop_var: V230244
     loop:
-      - { regex: '^(#*|#\s*|\s*)X11UseLocalhost  ', line: "X11UseLocalhost yes" }
+      - regex: '^(#*|#\s*|\s*)X11UseLocalhost  '
+        line: "X11UseLocalhost yes"
 
   - name: "RHEL 8 remote X connections for interactive users must be disabled unless to fulfill documented and validated mission requirements."
     tags:
@@ -569,7 +582,8 @@
     loop_control:
       loop_var: V230555
     loop:
-      - { regex: '^(#*|#\s*|\s*)X11Forwarding ', line: "X11Forwarding no" }
+      - regex: '^(#*|#\s*|\s*)X11Forwarding '
+        line: "X11Forwarding no"
         #           X11 forwarding should be enabled with caution. Users with the ability to bypass file permissions on
         #           the remote host (for the user's X11 authorization database) can access the local X11 display through
         #           the forwarded connection. An attacker may then be able to perform activities such as keystroke
@@ -608,7 +622,8 @@
     loop_control:
       loop_var: V230527
     loop:
-      - { regex: '^(#*|#\s*|\s*)RekeyLimit ', line: "RekeyLimit 1G 1h" }
+      - regex: '^(#*|#\s*|\s*)RekeyLimit '
+        line: "RekeyLimit 1G 1h"
 
   - name: "RHEL 8 must display the date and time of the last successful account logon upon an SSH logon."
     tags:
@@ -637,7 +652,8 @@
     loop_control:
       loop_var: V230382
     loop:
-      - { regex: '^(#*|#\s*|\s*)PrintLastLog ', line: "PrintLastLog yes" }
+      - regex: '^(#*|#\s*|\s*)PrintLastLog '
+        line: "PrintLastLog yes"
 
   - name: "RHEL 8 must not allow accounts configured with blank or null passwords."
     tags:
@@ -666,7 +682,8 @@
     loop_control:
       loop_var: V230380
     loop:
-      - { regex: '^(#*|#\s*|\s*)PermitEmptyPasswords ', line: "PermitEmptyPasswords no" }
+      - regex: '^(#*|#\s*|\s*)PermitEmptyPasswords '
+        line: "PermitEmptyPasswords no"
 
 # - name: "There must be no shosts.equiv files on the RHEL 8 operating system."
 #   tags:
@@ -687,7 +704,7 @@
 #       - MAC-3_Sensitive
 #   block:
 #     ansible.builtin.debug:
-#       msg: > 
+#       msg: >
 #        Description:
 #           The "shosts.equiv" files are used to configure host-based authentication for the system via SSH.
 #           Host-based authentication is not sufficient for preventing unauthorized access to the system, as it
@@ -722,7 +739,7 @@
 #       - MAC-3_Sensitive
 #   block:
 #     ansible.builtin.debug:
-#       msg: > 
+#       msg: >
 #        Description:
 #           The ".shosts" files are used to configure host-based authentication for individual users or the
 #           system via SSH. Host-based authentication is not sufficient for preventing unauthorized access to
@@ -758,7 +775,7 @@
 #       - MAC-3_Sensitive
 #   block:
 #     ansible.builtin.debug:
-#       msg: > 
+#       msg: >
 #        Description:
 #           If an unauthorized user obtains access to a private key without a passcode, that user would have
 #           unauthorized access to any system where the associated public key has been installed.
