@@ -15,15 +15,6 @@
       - SV-244549r854078_rule
       - C-47824r743894_chk
       - F-47781r743895_fix
-      - MAC-1_Classified
-      - MAC-1_Public
-      - MAC-1_Sensitive
-      - MAC-2_Classified
-      - MAC-2_Public
-      - MAC-2_Sensitive
-      - MAC-3_Classified
-      - MAC-3_Public
-      - MAC-3_Sensitive
       - SRG-OS-000423-GPOS-00187
       - SRG-OS-000424-GPOS-00188
       - SRG-OS-000425-GPOS-00189
@@ -53,15 +44,6 @@
         - SV-230286r627750_rule
         - C-32955r567604_chk
         - F-32930r567605_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.file:
       path: "{{ V230286 }}"
       owner: root
@@ -83,15 +65,6 @@
         - SV-230287r743951_rule
         - C-32956r743949_chk
         - F-32931r743950_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.file:
       path: "{{ V230287 }}"
       owner: root
@@ -113,15 +86,6 @@
         - SV-230253r627750_rule
         - C-32922r567505_chk
         - F-32897r567506_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/sysconfig/sshd"
       create: true
@@ -143,15 +107,6 @@
         - SV-230252r743940_rule
         - C-32921r743938_chk
         - F-32896r743939_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
         - SRG-OS-000250-GPOS-00093
         - SRG-OS-000393-GPOS-00173
         - SRG-OS-000394-GPOS-00174
@@ -177,15 +132,6 @@
         - SV-244526r809334_rule
         - C-47801r809332_chk
         - F-47758r809333_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/sysconfig/sshd"
       create: true
@@ -212,15 +158,6 @@
         - SV-230225r858694_rule
         - C-32894r858693_chk
         - F-32869r567422_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
         - SRG-OS-000023-GPOS-00006
         - SRG-OS-000228-GPOS-00088
     block:
@@ -257,15 +194,6 @@
         - SV-230288r858701_rule
         - C-32957r858700_chk
         - F-32932r567611_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -287,15 +215,6 @@
         - SV-230289r858703_rule
         - C-32958r858702_chk
         - F-32933r743953_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -317,15 +236,6 @@
         - SV-230290r858705_rule
         - C-32959r858704_chk
         - F-32934r567617_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -347,15 +257,6 @@
         - SV-230291r858707_rule
         - C-32960r858706_chk
         - F-32935r743956_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -377,15 +278,6 @@
         - SV-230296r858711_rule
         - C-32965r858710_chk
         - F-32940r567635_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -407,15 +299,6 @@
         - SV-230330r858713_rule
         - C-32999r858712_chk
         - F-32974r567737_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -437,15 +320,6 @@
         - SV-230244r858697_rule
         - C-32913r858695_chk
         - F-32888r858696_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
         - SRG-OS-000163-GPOS-00072
         - SRG-OS-000126-GPOS-00066
         - SRG-OS-000279-GPOS-00109
@@ -470,15 +344,6 @@
         - SV-244528r858709_rule
         - C-47803r858708_chk
         - F-47760r743832_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -500,15 +365,6 @@
         - SV-244525r858699_rule
         - C-47800r858698_chk
         - F-47757r743823_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
         - SRG-OS-000163-GPOS-00072
         - SRG-OS-000126-GPOS-00066
         - SRG-OS-000279-GPOS-00109
@@ -533,15 +389,6 @@
         - SV-230556r858723_rule
         - C-33225r858722_chk
         - F-33200r568415_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -563,15 +410,6 @@
         - SV-230555r858721_rule
         - C-33224r858720_chk
         - F-33199r568412_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -600,15 +438,6 @@
         - SV-230527r858719_rule
         - C-33196r858718_chk
         - F-33171r568328_fix
-        - MAC-1_Classified
-        - MAC-1_Public
-        - MAC-1_Sensitive
-        - MAC-2_Classified
-        - MAC-2_Public
-        - MAC-2_Sensitive
-        - MAC-3_Classified
-        - MAC-3_Public
-        - MAC-3_Sensitive
         - SRG-OS-000033-GPOS-00014
         - SRG-OS-000420-GPOS-00186
         - SRG-OS-000424-GPOS-00188
@@ -633,15 +462,6 @@
         - SV-230382r858717_rule
         - C-33051r858716_chk
         - F-33026r567893_fix
-        - MAC-1_Classified"
-        - MAC-1_Public"
-        - MAC-1_Sensitive"
-        - MAC-2_Classified"
-        - MAC-2_Public"
-        - MAC-2_Sensitive"
-        - MAC-3_Classified"
-        - MAC-3_Public"
-        - MAC-3_Sensitive"
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
@@ -663,15 +483,6 @@
         - SV-230380r858715_rule
         - C-33049r858714_chk
         - F-33024r743992_fix
-        - MAC-1_Classified"
-        - MAC-1_Public"
-        - MAC-1_Sensitive"
-        - MAC-2_Classified"
-        - MAC-2_Public"
-        - MAC-2_Sensitive"
-        - MAC-3_Classified"
-        - MAC-3_Public"
-        - MAC-3_Sensitive"
     ansible.builtin.lineinfile:
       name: "/etc/ssh/sshd_config"
       create: true
