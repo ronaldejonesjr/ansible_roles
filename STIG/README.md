@@ -1,10 +1,10 @@
 # Roles // STIG
 
-This role ...  
+The goal of this role is to provide a starting point for using the STIG standard.
+Tasks are broken up by the file or services they affect for easier referencing.  The overall approach is meant not to fully run this as a role, but to be an example that the pieces needed can be extracted from.
 
 ## OS Family / Distrobution
 * RHEL
-  * RHEL 7
   * RHEL 8
   * Fedora 37
 * Debian
@@ -12,15 +12,15 @@ This role ...
 
 ## Requirements
 
-This role ...
+N/A
 
 ## Role Variables
 
-The vars used in this role are ...  
+Vars for each config or tasks should have a corresponding var file.
 
 ## Dependencies
 
-This role only utilizes of the ansible.builtin library. 
+This role makes use of ansible.builtin and ansible.community libraries.
 
 ## Examples
 
@@ -32,15 +32,9 @@ This role only utilizes of the ansible.builtin library.
   hosts: localhost
   connection: local
   become: true
-  
+
   roles:
     - STIG
-```
-
-### Bash Script 
-This script can be used as part of a kickstart file or separately to start the process.
-```bash
-
 ```
 
 ## License
@@ -49,6 +43,5 @@ GNU General Public License version 3
 
 ## Author Information
 
-Initially written by Ron Jones Jr.  
-Additional contributors should be tracked and credited via Git comments. 
+Contributors should be tracked and credited via Git comments.
 
